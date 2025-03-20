@@ -2,12 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 
 function Registro() {
-  const [usuario, setUsuario] = useState({
-    nombre: "",
-    email: "",
-    password: "",
-  });
-
+  const [usuario, setUsuario] = useState({ nombre: "", email: "", password: "" });
   const [mensaje, setMensaje] = useState("");
 
   const handleChange = (e) => {
@@ -20,7 +15,7 @@ function Registro() {
       const respuesta = await axios.post("http://localhost:5000/api/registro", usuario);
       setMensaje(respuesta.data.mensaje);
     } catch (error) {
-      setMensaje("Error al registrar usuario");
+      setMensaje(error.response?.data?.mensaje || "Error al registrar usuario");
     }
   };
 
