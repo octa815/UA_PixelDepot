@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import "./css/Registro.css";
 
 function Registro() {
   const [usuario, setUsuario] = useState({ nombre: "", email: "", password: "" });
@@ -12,7 +13,7 @@ function Registro() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const respuesta = await axios.post("https://localhost:5000/api/registro", usuario);
+      const respuesta = await axios.post("/api/registro", usuario); // Usar solo la URL relativa
       setMensaje(respuesta.data.mensaje);
     } catch (error) {
       setMensaje(error.response?.data?.mensaje || "Error al registrar usuario");
@@ -20,7 +21,8 @@ function Registro() {
   };
 
   return (
-    <div>
+    <body>
+      <div>
       <h2>Registro</h2>
       <form onSubmit={handleSubmit}>
         <input type="text" name="nombre" placeholder="Nombre" onChange={handleChange} required />
@@ -29,7 +31,8 @@ function Registro() {
         <button type="submit">Registrarse</button>
       </form>
       {mensaje && <p>{mensaje}</p>}
-    </div>
+      </div>
+    </body>
   );
 }
 
