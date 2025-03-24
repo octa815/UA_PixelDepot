@@ -1,5 +1,5 @@
-import { useState } from "react";
 import axios from "axios";
+import { useState } from "react";
 import "./css/Registro.css";
 
 function Registro() {
@@ -21,18 +21,46 @@ function Registro() {
   };
 
   return (
-    <body>
-      <div>
-      <h2>Registro</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="text" name="nombre" placeholder="Nombre" onChange={handleChange} required />
-        <input type="email" name="email" placeholder="Correo" onChange={handleChange} required />
-        <input type="password" name="password" placeholder="Contraseña" onChange={handleChange} required />
-        <button type="submit">Registrarse</button>
-      </form>
-      {mensaje && <p>{mensaje}</p>}
+    <div>
+    <header className="header-container">
+      <div className="header-left">
+        <nav className="header-nav">
+          <a href="/" className="header-link">Inicio</a>
+          <a href="/explorar" className="header-link">Explorar</a>
+        </nav>
       </div>
-    </body>
+      <div className="header-search">
+        <input type="text" placeholder="Buscar" className="search-input" />
+        <button className="search-button">🔍</button>
+      </div>
+    </header>
+    <div className="registro-container">
+      <div className="registro-box">
+        {mensaje && <p>{mensaje}</p>}
+        <h2 className="registro-title">Registro</h2>
+        <form className="registro-form" onSubmit={handleSubmit}>
+          <div>
+            <label className="registro-label">Nombre de Usuario</label>
+            <input type="text" name="nombre" className="registro-input" onChange={handleChange} />
+          </div>
+          <div>
+            <label className="registro-label">Email</label>
+            <input type="email" name="email" className="registro-input" onChange={handleChange} />
+          </div>
+          <div>
+            <label className="registro-label">Contraseña</label>
+            <input type="password" name="password" className="registro-input" onChange={handleChange} />
+          </div>
+          <div>
+            <label className="registro-label">Repetir Contraseña</label>
+            <input type="password" className="registro-input" />
+          </div>
+          <button type="submit" className="registro-button">Registrarse</button>
+        </form>
+        <p className="registro-footer">¿Ya estás registrado? <a href="#" className="registro-link">Inicia sesión aquí</a></p>
+      </div>
+    </div>
+  </div>
   );
 }
 

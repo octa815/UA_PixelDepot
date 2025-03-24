@@ -1,7 +1,18 @@
-import AppRouter from "./AppRouter";
+
+import React from "react";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import Home from "./pages/Home";
+import Registro from "./pages/Registro";
 
 function App() {
-  return <AppRouter />;
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/registro" element={<Registro />} />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;
