@@ -13,7 +13,7 @@ function Registro() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const respuesta = await axios.post("/api/registro", usuario); // Usar solo la URL relativa
+      const respuesta = await axios.post("/api/registro", usuario);
       setMensaje(respuesta.data.mensaje);
     } catch (error) {
       setMensaje(error.response?.data?.mensaje || "Error al registrar usuario");
