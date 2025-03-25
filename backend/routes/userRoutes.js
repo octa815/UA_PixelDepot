@@ -11,11 +11,7 @@ router.post("/registro", setUser);
 // GET: Obtener todos los usuarios
 router.get("/usuarios", getUsers);
 
-// PUT: Actualizar usuario
-router.put("/usuarios/:id", updateUser);
-
-// DELETE: Eliminar usuario
-router.delete("/usuarios/:id", delUser);
+router.route("/usuarios/:id").put(updateUser).delete(delUser);
 
 
 module.exports = router;

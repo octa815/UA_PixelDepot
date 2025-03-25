@@ -90,4 +90,4 @@ const delUser = async (req, res) => {
 }
   
 
-module.exports = { getUsers };
+module.exports = { getUsers,setUser,updateUser,delUser };   // Exportar funciones de controlador
