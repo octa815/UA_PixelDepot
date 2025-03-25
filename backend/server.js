@@ -1,4 +1,6 @@
-const dotenv = require("dotenv").config();
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, ".env") });
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -10,7 +12,7 @@ const app = express();
 // Configuración
 app.use(express.json());
 app.use(cors());
-
+console.log("Mongo URI:", process.env.MONGO_URI);
 // Conectar a MongoDB
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ Conectado a MongoDB"))
@@ -20,12 +22,12 @@ mongoose.connect(process.env.MONGO_URI)
 const userRoutes = require("./routes/userRoutes");
 app.use("/api", userRoutes);
 
-app.use(errorHandler);
+app.use(errorHandler)
 
 // Configuración de HTTPS
 const options = {
-  key: fs.readFileSync("backend/ssl/private-key.pem"), // Ruta a la clave privada
-  cert: fs.readFileSync("backend/ssl/certificate.pem"), // Ruta al certificado
+  key: fs.readFileSync(path.join(__dirname, 'ssl/private-key.pem')), // Cambiado para usar una ruta absoluta
+  cert: fs.readFileSync(path.join(__dirname, 'ssl/certificate.pem')), // Cambiado también aquí
 };
 
 // Iniciar servidor HTTPS

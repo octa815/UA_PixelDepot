@@ -16,7 +16,7 @@
     "web-vitals": "^2.1.4"  
   },
   "scripts": {
-    "start": "concurrently \"npm run server\" \"react-scripts start\"",
+    "start": "concurrently \"npm run server\" \"BROWSER=none react-scripts start\"",
     "server": "nodemon backend/server.js",
     "build": "react-scripts build",
     "test": "react-scripts test",

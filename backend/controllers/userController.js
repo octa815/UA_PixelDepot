@@ -1,4 +1,6 @@
 const asyncHandler = require("express-async-handler");
+const bcrypt = require("bcryptjs");
+const User = require("../models/User"); // Import the User model
 
 // @desc:   Post an user
 // @route:  POST /api/users
@@ -9,8 +11,10 @@ const setUser = asyncHandler(async (req, res) => {
 
     // Verificar si el usuario ya existe
     const usuarioExistente = await User.findOne({ email });
-    if (usuarioExistente) return res.status(400)
-        throw new Error("El usuario ya existe");
+    if (usuarioExistente) {
+      return res.status(400).json({ mensaje: "El usuario ya existe" });
+    }
+
     // Encriptar contraseña
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
@@ -24,7 +28,7 @@ const setUser = asyncHandler(async (req, res) => {
     console.log(error);
     res.status(500).json({ mensaje: "Error en el servidor" });
   }
-})
+});
 
 // @desc:   Get all users
 // @route:  GET /api/users
@@ -37,9 +41,9 @@ const getUsers = asyncHandler(async (req, res) => {
     console.log(error);
     res.status(500).json({ mensaje: "Error al obtener usuarios" });
   }
-})
+});
 
-// @desc:   update user
+// @desc:   Update user
 // @route:  PUT /api/users/:id
 // @access: Private
 const updateUser = asyncHandler(async (req, res) => {
@@ -49,7 +53,9 @@ const updateUser = asyncHandler(async (req, res) => {
 
     // Buscar el usuario por su ID
     const usuario = await User.findById(id);
-    if (!usuario) return res.status(404).json({ mensaje: "Usuario no encontrado" });
+    if (!usuario) {
+      return res.status(404).json({ mensaje: "Usuario no encontrado" });
+    }
 
     // Verificar si se quiere actualizar la contraseña
     if (password) {
@@ -68,9 +74,9 @@ const updateUser = asyncHandler(async (req, res) => {
     console.log(error);
     res.status(500).json({ mensaje: "Error al actualizar el usuario" });
   }
-})
+});
 
-// @desc:   delete user
+// @desc:   Delete user
 // @route:  DELETE /api/users/:id
 // @access: Private
 const delUser = asyncHandler(async (req, res) => {
@@ -79,7 +85,9 @@ const delUser = asyncHandler(async (req, res) => {
 
     // Buscar el usuario por su ID
     const usuario = await User.findById(id);
-    if (!usuario) return res.status(404).json({ mensaje: "Usuario no encontrado" });
+    if (!usuario) {
+      return res.status(404).json({ mensaje: "Usuario no encontrado" });
+    }
 
     // Eliminar usuario
     await usuario.remove();
@@ -89,7 +97,6 @@ const delUser = asyncHandler(async (req, res) => {
     console.log(error);
     res.status(500).json({ mensaje: "Error al eliminar el usuario" });
   }
-})
-  
+});
 
-module.exports = { getUsers,setUser,updateUser,delUser };   // Exportar funciones de controlador
+module.exports = { getUsers, setUser, updateUser, delUser };
