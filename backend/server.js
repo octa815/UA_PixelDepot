@@ -1,10 +1,10 @@
-require("dotenv").config();
+const dotenv = require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const fs = require("fs");
 const https = require("https");
-
+const {errorHandler} = require("./middleware/errorMiddleware");
 const app = express();
 
 // Configuración
@@ -20,10 +20,12 @@ mongoose.connect(process.env.MONGO_URI)
 const userRoutes = require("./routes/userRoutes");
 app.use("/api", userRoutes);
 
+app.use(errorHandler);
+
 // Configuración de HTTPS
 const options = {
-  key: fs.readFileSync("ssl/private-key.pem"), // Ruta a la clave privada
-  cert: fs.readFileSync("ssl/certificate.pem"), // Ruta al certificado
+  key: fs.readFileSync("backend/ssl/private-key.pem"), // Ruta a la clave privada
+  cert: fs.readFileSync("backend/ssl/certificate.pem"), // Ruta al certificado
 };
 
 // Iniciar servidor HTTPS

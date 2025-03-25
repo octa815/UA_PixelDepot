@@ -1,14 +1,16 @@
+const asyncHandler = require("express-async-handler");
+
 // @desc:   Post an user
 // @route:  POST /api/users
 // @access: Private
-const setUser = async (req, res) => {
+const setUser = asyncHandler(async (req, res) => {
   try {
     const { nombre, email, password } = req.body;
 
     // Verificar si el usuario ya existe
     const usuarioExistente = await User.findOne({ email });
-    if (usuarioExistente) return res.status(400).json({ mensaje: "El usuario ya existe" });
-
+    if (usuarioExistente) return res.status(400)
+        throw new Error("El usuario ya existe");
     // Encriptar contraseña
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
@@ -22,12 +24,12 @@ const setUser = async (req, res) => {
     console.log(error);
     res.status(500).json({ mensaje: "Error en el servidor" });
   }
-};
+})
 
 // @desc:   Get all users
 // @route:  GET /api/users
 // @access: Private
-const getUser = async (req, res) => {
+const getUsers = asyncHandler(async (req, res) => {
   try {
     const usuarios = await User.find({}, { password: 0 }); // Excluir contraseñas
     res.json(usuarios);
@@ -35,12 +37,12 @@ const getUser = async (req, res) => {
     console.log(error);
     res.status(500).json({ mensaje: "Error al obtener usuarios" });
   }
-}
+})
 
 // @desc:   update user
 // @route:  PUT /api/users/:id
 // @access: Private
-const updateUser = async (req, res) => {
+const updateUser = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
     const { nombre, email, password } = req.body;
@@ -66,12 +68,12 @@ const updateUser = async (req, res) => {
     console.log(error);
     res.status(500).json({ mensaje: "Error al actualizar el usuario" });
   }
-}
+})
 
 // @desc:   delete user
 // @route:  DELETE /api/users/:id
 // @access: Private
-const delUser = async (req, res) => {
+const delUser = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -87,7 +89,7 @@ const delUser = async (req, res) => {
     console.log(error);
     res.status(500).json({ mensaje: "Error al eliminar el usuario" });
   }
-}
+})
   
 
 module.exports = { getUsers,setUser,updateUser,delUser };   // Exportar funciones de controlador

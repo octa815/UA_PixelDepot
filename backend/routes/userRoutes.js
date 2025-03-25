@@ -2,7 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const {setUser,getUsers,updateUser} = require("../controllers/userController");
+const {setUser,getUsers,updateUser,delUser} = require("../controllers/userController");
 const router = express.Router();
 
 // Ruta de Registro
