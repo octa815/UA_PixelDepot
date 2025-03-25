@@ -5,14 +5,15 @@ const User = require("../models/User"); // Import the User model
 // @desc:   Post an user
 // @route:  POST /api/users
 // @access: Private
-const setUser = asyncHandler(async (req, res) => {
+const setUser = asyncHandler(async (req, res, next) => {
   try {
     const { nombre, email, password } = req.body;
 
     // Verificar si el usuario ya existe
     const usuarioExistente = await User.findOne({ email });
     if (usuarioExistente) {
-      return res.status(400).json({ mensaje: "El usuario ya existe" });
+      res.status(400);
+      throw new Error("El usuario ya existe");
     }
 
     // Encriptar contraseña
@@ -25,28 +26,26 @@ const setUser = asyncHandler(async (req, res) => {
 
     res.json({ mensaje: "Usuario registrado correctamente" });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ mensaje: "Error en el servidor" });
+    next(error); // Pasar el error al middleware
   }
 });
 
 // @desc:   Get all users
 // @route:  GET /api/users
 // @access: Private
-const getUsers = asyncHandler(async (req, res) => {
+const getUsers = asyncHandler(async (req, res, next) => {
   try {
     const usuarios = await User.find({}, { password: 0 }); // Excluir contraseñas
     res.json(usuarios);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ mensaje: "Error al obtener usuarios" });
+    next(error); // Pasar el error al middleware
   }
 });
 
 // @desc:   Update user
 // @route:  PUT /api/users/:id
 // @access: Private
-const updateUser = asyncHandler(async (req, res) => {
+const updateUser = asyncHandler(async (req, res, next) => {
   try {
     const { id } = req.params;
     const { nombre, email, password } = req.body;
@@ -54,7 +53,8 @@ const updateUser = asyncHandler(async (req, res) => {
     // Buscar el usuario por su ID
     const usuario = await User.findById(id);
     if (!usuario) {
-      return res.status(404).json({ mensaje: "Usuario no encontrado" });
+      res.status(404);
+      throw new Error("Usuario no encontrado");
     }
 
     // Verificar si se quiere actualizar la contraseña
@@ -71,22 +71,22 @@ const updateUser = asyncHandler(async (req, res) => {
 
     res.json({ mensaje: "Usuario actualizado correctamente" });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ mensaje: "Error al actualizar el usuario" });
+    next(error); // Pasar el error al middleware
   }
 });
 
 // @desc:   Delete user
 // @route:  DELETE /api/users/:id
 // @access: Private
-const delUser = asyncHandler(async (req, res) => {
+const delUser = asyncHandler(async (req, res, next) => {
   try {
     const { id } = req.params;
 
     // Buscar el usuario por su ID
     const usuario = await User.findById(id);
     if (!usuario) {
-      return res.status(404).json({ mensaje: "Usuario no encontrado" });
+      res.status(404);
+      throw new Error("Usuario no encontrado");
     }
 
     // Eliminar usuario
@@ -94,8 +94,7 @@ const delUser = asyncHandler(async (req, res) => {
 
     res.json({ mensaje: "Usuario eliminado correctamente" });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ mensaje: "Error al eliminar el usuario" });
+    next(error); // Pasar el error al middleware
   }
 });
 
