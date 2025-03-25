@@ -9,7 +9,7 @@
 .registro-box {
   width: 100%;
   max-width: 400px;
-  padding: 20px;
+  padding: 30px;
   background-color: #2d2d2d;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   border-radius: 10px;
@@ -26,31 +26,33 @@
 .registro-form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
+  text-align: left;
 }
 
 .registro-label {
-  text-align: left;
   font-size: 14px;
   color: #cccccc;
 }
 
 .registro-input {
-  width: 100%;
-  padding: 10px;
-  background-color: #3b3b3b;
+  width: 99%;
+  height: 30px;
+  background-color: #ededed;
   border: 1px solid #555;
   border-radius: 5px;
-  color: #fff;
+  color: black;
 }
 
 .registro-button {
-  width: 100%;
+  width: 50%;
   padding: 10px;
   background-color: #007bff;
   color: white;
   font-weight: bold;
   border: none;
+  margin: 10px auto;
+  display: block;
   border-radius: 5px;
   cursor: pointer;
 }
@@ -91,21 +93,21 @@
 }
 
 .header-logo {
-  width: 40px; /* Ajusta según el tamaño del logo */
+  width: 42px; /* Ajusta según el tamaño del logo */
   height: auto;
   margin-right: 15px;
 }
 
 .header-nav {
   display: flex;
-  margin-left: 50px;
-  gap: 80px;
+  margin-left: 85px;
+  gap: 120px;
 }
 
 .header-link {
   text-decoration: none;
   color: white;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: bold;
   transition: color 0.3s;
 }
@@ -116,19 +118,19 @@
 
 .header-search {
   display: flex;
-  align-items: center;
-  background-color: white; 
+  background-color: #1a1a1a;
+  border: .1px solid rgb(51, 139, 255); /* Añade un borde fino azul */
   border-radius: 20px;
   padding: 5px 10px;
-  width: 750px;
-  margin-left: -50px; 
+  width: 900px;
+  margin-right: 40px;
 }
 
 .search-input {
   background: transparent;
   border: none;
   outline: none;
-  color: black;
+  color: whitesmoke;
   padding: 5px;
   width: 100%;
 }

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import "./css/Registro.css";
+import logo from "./css/logo.png";
 
 function Registro() {
   const [usuario, setUsuario] = useState({ nombre: "", email: "", password: "" });
@@ -24,6 +25,7 @@ function Registro() {
     <div>
     <header className="header-container">
       <div className="header-left">
+      <img src={logo} alt="Logo" className="header-logo" />
         <nav className="header-nav">
           <a href="/" className="header-link">Inicio</a>
           <a href="/explorar" className="header-link">Explorar</a>
