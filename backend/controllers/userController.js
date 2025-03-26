@@ -42,6 +42,26 @@ const getUsers = asyncHandler(async (req, res, next) => {
   }
 });
 
+// @desc:   Get a user by ID
+// @route:  GET /api/users/:id
+// @access: Private
+const getUser = asyncHandler(async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    // Buscar el usuario por su ID
+    const usuario = await User.findById(id, { password: 0 }); // Excluir contraseña
+    if (!usuario) {
+      res.status(404);
+      throw new Error("Usuario no encontrado");
+    }
+
+    res.json(usuario);
+  } catch (error) {
+    next(error); // Pasar el error al middleware
+  }
+});
+
 // @desc:   Update user
 // @route:  PUT /api/users/:id
 // @access: Private
@@ -90,7 +110,7 @@ const delUser = asyncHandler(async (req, res, next) => {
     }
 
     // Eliminar usuario
-    await usuario.remove();
+    await usuario.deleteOne();
 
     res.json({ mensaje: "Usuario eliminado correctamente" });
   } catch (error) {
@@ -98,4 +118,4 @@ const delUser = asyncHandler(async (req, res, next) => {
   }
 });
 
-module.exports = { getUsers, setUser, updateUser, delUser };
+module.exports = { getUsers, setUser, updateUser, delUser, getUser };
