@@ -59,6 +59,13 @@
   margin-bottom: 15px;
 }
 
+
+.mensaje {
+  color: red; /* Cambia el color a rojo */
+  font-weight: bold; /* Opcional: hace el texto más grueso */
+}
+
+
 .registro-form {
   display: flex;
   flex-direction: column;

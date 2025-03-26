@@ -1,9 +1,10 @@
 
 import React from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import Home from "./pages/Home";
-import Registro from "./pages/Registro";
 import Dashboard from "./pages/Dashboard";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Registro from "./pages/Registro";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/registro" element={<Registro />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </Router>
   );

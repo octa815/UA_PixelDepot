@@ -1,10 +1,10 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./css/Registro.css";
+import "./css/Login.css";
 import logo from "./css/logo.png";
 
-function Registro() {
+function Login() {
   const [usuario, setUsuario] = useState({ nombre: "", email: "", password: "" });
   const [mensaje, setMensaje] = useState("");
   const [menuAbierto, setMenuAbierto] = useState(false); // Estado para el menú
@@ -50,13 +50,9 @@ function Registro() {
       </header>
       <div className="registro-container">
         <div className="registro-box">
-        {mensaje && <p className="mensaje">{mensaje}</p>}
-          <h2 className="registro-title">Registro</h2>
+          {mensaje && <p>{mensaje}</p>}
+          <h2 className="registro-title">Inicio de Sesion</h2>
           <form className="registro-form" onSubmit={handleSubmit}>
-            <div>
-              <label className="registro-label">Nombre de Usuario</label>
-              <input type="text" name="nombre" className="registro-input" onChange={handleChange} />
-            </div>
             <div>
               <label className="registro-label">Email</label>
               <input type="email" name="email" className="registro-input" onChange={handleChange} />
@@ -65,20 +61,16 @@ function Registro() {
               <label className="registro-label">Contraseña</label>
               <input type="password" name="password" className="registro-input" onChange={handleChange} />
             </div>
-            <div>
-              <label className="registro-label">Repetir Contraseña</label>
-              <input type="password" className="registro-input" />
-            </div>
-            <button type="submit" className="registro-button">Registrarse</button>
+            <button type="submit" className="registro-button">Iniciar Sesión</button>
           </form>
           <p className="registro-footer">
-            ¿Ya estás registrado? 
-            <Link to="/login" className="registro-link">Inicia sesión aquí</Link>
-          </p>
+            ¿No estás registrado? 
+            <Link to="/registro" className="registro-link">Registrate aqui</Link>
+        </p>
         </div>
       </div>
     </div>
   );
 }
 
-export default Registro;
+export default Login;
