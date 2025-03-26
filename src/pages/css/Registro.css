@@ -247,3 +247,55 @@
     margin-left: 35px;
   }
 }
+
+/* Añadir al final del archivo */
+.user-name {
+  margin-left: 10px;
+  color: white;
+  font-weight: bold;
+  margin-right: 20px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+  cursor: pointer;
+  position: relative;
+}
+
+.user-icon {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
+
+.user-name {
+  color: white;
+  font-weight: bold;
+}
+
+.user-menu {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background-color: #2d2d2d;
+  border: 1px solid #555;
+  border-radius: 5px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-menu button {
+  background: none;
+  border: none;
+  color: white;
+  padding: 10px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.user-menu button:hover {
+  background-color: #444;
+}
