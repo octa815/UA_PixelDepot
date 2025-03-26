@@ -8,7 +8,10 @@ const fs = require("fs");
 const https = require("https");
 const {errorHandler} = require("./middleware/errorMiddleware");
 const app = express();
+const colors = require("colors");
+const connectDB = require("./config/db");
 
+connectDB();
 // Configuración
 app.use(express.json());
 app.use(cors());
