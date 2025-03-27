@@ -5,7 +5,7 @@ import "./css/Login.css";
 import logo from "./css/logo.png";
 
 function Login() {
-  const [usuario, setUsuario] = useState({ nombre: "", email: "", password: "" });
+  const [usuario, setUsuario] = useState({ email: "", password: "" }); // Eliminado el campo "nombre"
   const [mensaje, setMensaje] = useState("");
   const [menuAbierto, setMenuAbierto] = useState(false); // Estado para el menú
   const navigate = useNavigate(); // Hook para la navegación
@@ -17,12 +17,13 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const respuesta = await axios.post("/api/registro", usuario);
+      // Cambiado el endpoint al correcto para login
+      const respuesta = await axios.post("/api/auth/login", usuario);
       setMensaje(respuesta.data.mensaje);
-      localStorage.setItem("usuario", JSON.stringify(usuario)); // Guardar usuario en localStorage
+      localStorage.setItem("usuario", JSON.stringify(respuesta.data.usuario)); // Guardar usuario en localStorage
       navigate("/"); // Redirigir a la página de inicio
     } catch (error) {
-      setMensaje(error.response?.data?.mensaje || "Error al registrar usuario");
+      setMensaje(error.response?.data?.mensaje || "Error al iniciar sesión");
     }
   };
 
@@ -55,18 +56,30 @@ function Login() {
           <form className="registro-form" onSubmit={handleSubmit}>
             <div>
               <label className="registro-label">Email</label>
-              <input type="email" name="email" className="registro-input" onChange={handleChange} />
+              <input
+                type="email"
+                name="email"
+                className="registro-input"
+                onChange={handleChange}
+                required
+              />
             </div>
             <div>
               <label className="registro-label">Contraseña</label>
-              <input type="password" name="password" className="registro-input" onChange={handleChange} />
+              <input
+                type="password"
+                name="password"
+                className="registro-input"
+                onChange={handleChange}
+                required
+              />
             </div>
             <button type="submit" className="registro-button">Iniciar Sesión</button>
           </form>
           <p className="registro-footer">
             ¿No estás registrado? 
-            <Link to="/registro" className="registro-link">Registrate aqui</Link>
-        </p>
+            <Link to="/registro" className="registro-link"> Registrate aqui</Link>
+          </p>
         </div>
       </div>
     </div>

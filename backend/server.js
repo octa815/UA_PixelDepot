@@ -24,6 +24,7 @@ mongoose.connect(process.env.MONGO_URI)
 // Rutas de usuario
 const userRoutes = require("./routes/userRoutes");
 app.use("/api", userRoutes);
+app.use("/api/auth", userRoutes);
 
 app.use(errorHandler)
 

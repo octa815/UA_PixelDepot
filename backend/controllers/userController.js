@@ -2,6 +2,43 @@ const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User"); // Import the User model
 
+// @desc:   Login de usuario
+// @route:  POST /api/auth/login
+// @access: Público
+const loginUser = asyncHandler(async (req, res, next) => {
+  const { email, password } = req.body;
+
+  // Verificar que se envíen email y contraseña
+  if (!email || !password) {
+    res.status(400);
+    throw new Error("Por favor, proporciona un email y una contraseña");
+  }
+
+  // Buscar al usuario por email
+  const usuario = await User.findOne({ email });
+  if (!usuario) {
+    res.status(401);
+    throw new Error("Credenciales inválidas");
+  }
+
+  // Verificar la contraseña
+  const esPasswordCorrecto = await bcrypt.compare(password, usuario.password);
+  if (!esPasswordCorrecto) {
+    res.status(401);
+    throw new Error("Credenciales inválidas");
+  }
+
+  // Responder con éxito
+  res.json({
+    mensaje: "Login exitoso",
+    usuario: {
+      id: usuario._id,
+      nombre: usuario.nombre,
+      email: usuario.email,
+    },
+  });
+});
+
 // @desc:   Post an user
 // @route:  POST /api/users
 // @access: Private
@@ -118,4 +155,4 @@ const delUser = asyncHandler(async (req, res, next) => {
   }
 });
 
-module.exports = { getUsers, setUser, updateUser, delUser, getUser };
+module.exports = { getUsers, setUser, updateUser, delUser, getUser, loginUser };

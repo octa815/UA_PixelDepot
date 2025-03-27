@@ -73,7 +73,7 @@ function Registro() {
           </form>
           <p className="registro-footer">
             ¿Ya estás registrado? 
-            <Link to="/login" className="registro-link">Inicia sesión aquí</Link>
+            <Link to="/login" className="registro-link"> Inicia sesión aquí</Link>
           </p>
         </div>
       </div>
