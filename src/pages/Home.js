@@ -84,7 +84,12 @@ function Home() {
         <div className="registro-box">
           <h2 className="registro-title">Bienvenido a la plataforma</h2>
           <p className="registro-footer">Explora nuestras funcionalidades y disfruta de la experiencia.</p>
-          {!usuario && <button className="registro-button" onClick={handleRegistroClick}>Ir a registro</button>}
+          {!usuario && (
+          <>
+            <button className="registro-button" onClick={handleRegistroClick}>Ir a registro</button>
+            <button className="registro-button" onClick={() => navigate("/login")}>Ir a login</button>
+          </>
+        )}
         </div>
       </div>
     </div>

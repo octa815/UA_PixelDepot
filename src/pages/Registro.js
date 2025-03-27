@@ -6,6 +6,7 @@ import logo from "./css/logo.png";
 
 function Registro() {
   const [usuario, setUsuario] = useState({ nombre: "", email: "", password: "" });
+  const [repetirPassword, setRepetirPassword] = useState(""); // Estado para la segunda contraseña
   const [mensaje, setMensaje] = useState("");
   const [menuAbierto, setMenuAbierto] = useState(false); // Estado para el menú
   const navigate = useNavigate(); // Hook para la navegación
@@ -14,8 +15,19 @@ function Registro() {
     setUsuario({ ...usuario, [e.target.name]: e.target.value });
   };
 
+  const handleRepetirPasswordChange = (e) => {
+    setRepetirPassword(e.target.value);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validar que las contraseñas coincidan
+    if (usuario.password !== repetirPassword) {
+      setMensaje("Las contraseñas no coinciden");
+      return;
+    }
+
     try {
       const respuesta = await axios.post("/api/registro", usuario);
       setMensaje(respuesta.data.mensaje);
@@ -50,24 +62,47 @@ function Registro() {
       </header>
       <div className="registro-container">
         <div className="registro-box">
-        {mensaje && <p className="mensaje">{mensaje}</p>}
+          {mensaje && <p className="mensaje">{mensaje}</p>}
           <h2 className="registro-title">Registro</h2>
           <form className="registro-form" onSubmit={handleSubmit}>
             <div>
               <label className="registro-label">Nombre de Usuario</label>
-              <input type="text" name="nombre" className="registro-input" onChange={handleChange} />
+              <input
+                type="text"
+                name="nombre"
+                className="registro-input"
+                onChange={handleChange}
+                required
+              />
             </div>
             <div>
               <label className="registro-label">Email</label>
-              <input type="email" name="email" className="registro-input" onChange={handleChange} />
+              <input
+                type="email"
+                name="email"
+                className="registro-input"
+                onChange={handleChange}
+                required
+              />
             </div>
             <div>
               <label className="registro-label">Contraseña</label>
-              <input type="password" name="password" className="registro-input" onChange={handleChange} />
+              <input
+                type="password"
+                name="password"
+                className="registro-input"
+                onChange={handleChange}
+                required
+              />
             </div>
             <div>
               <label className="registro-label">Repetir Contraseña</label>
-              <input type="password" className="registro-input" />
+              <input
+                type="password"
+                className="registro-input"
+                onChange={handleRepetirPasswordChange}
+                required
+              />
             </div>
             <button type="submit" className="registro-button">Registrarse</button>
           </form>
