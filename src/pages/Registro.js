@@ -28,6 +28,15 @@ function Registro() {
       return;
     }
 
+    // Validar que la contraseña sea segura
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(usuario.password)) {
+      setMensaje(
+        "La contraseña debe tener al menos 8 caracteres, incluir una letra mayúscula, una letra minúscula, un número y un carácter especial."
+      );
+      return;
+    }
+
     try {
       const respuesta = await axios.post("/api/registro", usuario);
       setMensaje(respuesta.data.mensaje);
