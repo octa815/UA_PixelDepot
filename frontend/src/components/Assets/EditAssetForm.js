@@ -99,7 +99,7 @@ function EditAssetForm({ assetToEdit }) {
       {error && <p className={`message error ${styles.errorMessage}`}>{error}</p>}
 
       <Input
-        label="Título del Asset"
+        label="Título del asset"
         type="text"
         id="titulo"
         name="titulo"
@@ -111,7 +111,7 @@ function EditAssetForm({ assetToEdit }) {
       />
 
        <div className={styles.inputGroup}>
-        <label htmlFor="tipo" className={styles.label}>Tipo de Asset <span className={styles.required}>*</span></label>
+        <label htmlFor="tipo" className={styles.label}>Tipo de asset <span className={styles.required}>*</span></label>
         <select id="tipo" name="tipo" value={formData.tipo} onChange={handleChange} required disabled={loading} className={styles.selectInput}>
           {ASSET_TYPES.map(type => (
             <option key={type} value={type}>{type}</option>
@@ -125,7 +125,7 @@ function EditAssetForm({ assetToEdit }) {
       </div>
 
       <Input
-        label="Nueva Imagen Descriptiva (Opcional)"
+        label="Nueva imagen descriptiva (Opcional)"
         type="file"
         id="imagenDescriptiva"
         name="imagenDescriptiva"
@@ -135,11 +135,16 @@ function EditAssetForm({ assetToEdit }) {
       />
        {/* Muestra imagen actual o nombre del nuevo archivo */}
        {imagenDescriptiva && <p className={styles.fileName}>Nuevo archivo: {imagenDescriptiva.name}</p>}
-       {!imagenDescriptiva && assetToEdit.imagenDescriptiva && <p className={styles.fileName}>Imagen actual: {assetToEdit.imagenDescriptiva.split('/').pop()}</p>}
+       {!imagenDescriptiva && assetToEdit.imagenDescriptiva && (
+        <div className={styles.imagePreview}>
+          <p>Imagen actual:</p>
+          <img src={assetToEdit.imagenDescriptiva} alt="Imagen actual" className={styles.previewImage} />
+        </div>
+      )}
 
 
       <Input
-        label="Nuevo Archivo del Asset (Opcional)"
+        label="Nuevo archivo del asset (Opcional)"
         type="file"
         id="archivoAsset"
         name="archivoAsset"
@@ -152,7 +157,7 @@ function EditAssetForm({ assetToEdit }) {
 
 
       <Button type="submit" variant="primary" size="large" disabled={loading} className={styles.submitButton}>
-        {loading ? 'Actualizando...' : 'Guardar Cambios'}
+        {loading ? 'Actualizando...' : 'Guardar cambios'}
       </Button>
     </form>
   );

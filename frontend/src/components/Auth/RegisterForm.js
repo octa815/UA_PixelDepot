@@ -54,7 +54,7 @@ function RegisterForm() {
     <form onSubmit={handleSubmit} className={styles.form}>
       {error && <p className={`message error ${styles.errorMessage}`}>{error}</p>}
       <Input
-        label="Nombre de Usuario"
+        label="Nombre de usuario"
         type="text"
         id="register-nombre"
         name="nombre"
@@ -89,7 +89,7 @@ function RegisterForm() {
       />
        <p id="password-hint" className={styles.hint}>Mínimo 8 caracteres, con mayúscula, minúscula, número y símbolo (@$!%*?&).</p>
       <Input
-        label="Confirmar Contraseña"
+        label="Confirmar contraseña"
         type="password"
         id="register-confirmPassword"
         name="confirmPassword"

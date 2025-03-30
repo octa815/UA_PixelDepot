@@ -70,7 +70,7 @@ function UserProfile({ mode = 'view' }) {
 
   return (
     <div className={styles.profileContainer}>
-      <h2 className={styles.title}>{isEditing ? 'Editar Perfil' : 'Mi Perfil'}</h2>
+      <h2 className={styles.title}>{isEditing ? 'Editar perfil' : 'Mi perfil'}</h2>
 
         {error && <p className={`message error ${styles.formMessage}`}>{error}</p>}
         {success && <p className={`message success ${styles.formMessage}`}>{success}</p>}
@@ -78,7 +78,7 @@ function UserProfile({ mode = 'view' }) {
       {isEditing ? (
         <form onSubmit={handleSubmit} className={styles.form}>
           <Input
-            label="Nombre de Usuario"
+            label="Nombre de usuario"
             type="text"
             id="profile-nombre"
             name="nombre"
@@ -103,7 +103,7 @@ function UserProfile({ mode = 'view' }) {
 
           <div className={styles.buttonGroup}>
             <Button type="submit" variant="primary" disabled={loading}>
-              {loading ? 'Guardando...' : 'Guardar Cambios'}
+              {loading ? 'Guardando...' : 'Guardar cambios'}
             </Button>
              <Button type="button" variant="secondary" onClick={handleEditToggle} disabled={loading}>
               Cancelar

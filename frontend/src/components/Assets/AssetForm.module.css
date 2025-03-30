@@ -17,6 +17,21 @@
       margin-bottom: 1rem;
       text-align: center;
   }
+
+  .imagePreview {
+    margin-top: 10px;
+    text-align: center;
+  }
+  
+  .previewImage {
+    max-width: 100px; /* Ancho máximo de la miniatura */
+    max-height: 100px; /* Altura máxima de la miniatura */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    object-fit: cover; /* Asegura que la imagen mantenga sus proporciones */
+    display: block;
+    margin: 0 auto; /* Centra la imagen */
+  }
   
   /* Estilos para input/select/textarea dentro del form */
   .inputGroup {

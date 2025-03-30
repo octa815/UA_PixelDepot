@@ -71,7 +71,7 @@ function UploadAssetForm() {
       {error && <p className={`message error ${styles.errorMessage}`}>{error}</p>}
 
       <Input
-        label="Título del Asset"
+        label="Título del asset"
         type="text"
         id="titulo"
         name="titulo"
@@ -114,7 +114,7 @@ function UploadAssetForm() {
       </div>
 
       <Input
-        label="Imagen Descriptiva (.jpg, .png, .svg)"
+        label="Imagen descriptiva (.jpg, .png, .svg)"
         type="file"
         id="imagenDescriptiva"
         name="imagenDescriptiva"
@@ -127,7 +127,7 @@ function UploadAssetForm() {
 
 
       <Input
-        label="Archivo del Asset (.fbx, .blend, .obj, .mp3, .wav, .mp4, .py, etc.)"
+        label="Archivo del asset (.fbx, .blend, .obj, .mp3, .wav, .mp4, .py, etc.)"
         type="file"
         id="archivoAsset"
         name="archivoAsset"
@@ -140,7 +140,7 @@ function UploadAssetForm() {
 
 
       <Button type="submit" variant="primary" size="large" disabled={loading} className={styles.submitButton}>
-        {loading ? 'Subiendo...' : 'Subir Asset'}
+        {loading ? 'Subiendo...' : 'Subir asset'}
       </Button>
     </form>
   );
