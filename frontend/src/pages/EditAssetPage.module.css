@@ -1,0 +1,23 @@
+/* src/pages/EditAssetPage.module.css */
+.editContainer {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+  
+  .title {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    color: white;
+  }
+  
+  @media (max-width: 600px) {
+      .editContainer {
+          margin: 20px auto;
+          padding: 0 15px;
+      }
+      .title {
+          font-size: 1.8rem;
+      }
+  }

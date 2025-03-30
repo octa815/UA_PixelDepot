@@ -1,0 +1,22 @@
+/* src/styles/variables.css */
+:root {
+    --primary-bg-color: #0a0a0a; /* Fondo principal muy oscuro */
+    --secondary-bg-color: #1a1a1a; /* Fondo secundario ligeramente más claro */
+    --tertiary-bg-color: #2d2d2d; /* Fondo para cajas, modales, etc. */
+    --primary-text-color: #e0e0e0; /* Texto principal claro */
+    --secondary-text-color: #b0b0b0; /* Texto secundario/menos importante */
+    --accent-color: #007bff; /* Azul como color de acento (botones, enlaces) */
+    --accent-hover-color: #0056b3; /* Hover del color de acento */
+    --border-color: #444; /* Color de borde sutil */
+    --error-color: #dc3545; /* Color para mensajes de error */
+    --success-color: #28a745; /* Color para mensajes de éxito */
+  
+    --header-height: 70px;
+  
+    --font-family-main: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    --font-family-code: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  
+    --box-shadow-light: 0 2px 5px rgba(255, 255, 255, 0.1);
+    --box-shadow-medium: 0 4px 10px rgba(255, 255, 255, 0.15);
+    --border-radius: 8px;
+  }

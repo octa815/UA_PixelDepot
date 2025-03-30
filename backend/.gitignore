@@ -1,0 +1,27 @@
+# Dependencies / Instalaciones
+node_modules/
+/node_modules
+
+# Archivos Subidos por Usuarios
+# No forman parte del código fuente y pueden ser muy grandes
+uploads/
+
+# Logs y Archivos de Debug
+logs/
+*.log
+npm-debug.log*
+yarn-error.log
+yarn-debug.log*
+*.pid
+*.seed
+*.pid.lock
+
+# Archivos generados por el Sistema Operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de configuración de IDEs (Opcional)
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace

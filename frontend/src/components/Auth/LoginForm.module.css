@@ -1,0 +1,16 @@
+/* src/components/Auth/LoginForm.module.css */
+.form {
+    width: 100%;
+    max-width: 450px; /* Ancho máximo del formulario */
+    margin: 0 auto; /* Centrar */
+  }
+  
+  .errorMessage {
+      margin-bottom: 1rem;
+      text-align: center;
+  }
+  
+  .submitButton {
+    width: 100%; /* Botón ocupa todo el ancho */
+    margin-top: 1.5rem; /* Espacio antes del botón */
+  }

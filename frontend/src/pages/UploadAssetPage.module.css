@@ -1,0 +1,23 @@
+/* src/pages/UploadAssetPage.module.css */
+.uploadContainer {
+    max-width: 800px; /* Contenedor más ancho para el form */
+    margin: 40px auto;
+    padding: 0 20px; /* Padding lateral */
+  }
+  
+  .title {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    color: white;
+  }
+  
+  @media (max-width: 600px) {
+      .uploadContainer {
+          margin: 20px auto;
+          padding: 0 15px;
+      }
+      .title {
+          font-size: 1.8rem;
+      }
+  }

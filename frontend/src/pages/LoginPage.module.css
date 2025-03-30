@@ -1,0 +1,46 @@
+/* src/pages/LoginPage.module.css */
+.loginContainer {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 30px 40px;
+    background-color: var(--tertiary-bg-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow-medium);
+    text-align: center;
+  }
+  
+  .title {
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    color: white;
+  }
+  
+  .infoMessage {
+      margin-bottom: 1.5rem;
+      text-align: center;
+  }
+  
+  .registerLink {
+    margin-top: 2rem;
+    font-size: 0.95rem;
+    color: var(--secondary-text-color);
+  }
+  
+  .registerLink a {
+    color: var(--accent-color);
+    font-weight: bold;
+  }
+  
+  .registerLink a:hover {
+    text-decoration: underline;
+  }
+  
+  @media (max-width: 600px) {
+      .loginContainer {
+          margin: 20px 15px;
+          padding: 25px;
+      }
+      .title {
+          font-size: 1.8rem;
+      }
+  }

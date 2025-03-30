@@ -1,0 +1,77 @@
+/* src/components/Assets/FilterPanel.module.css */
+.panel {
+    background-color: var(--secondary-bg-color);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    /* Posicionamiento (ej. sticky en un layout de 2 columnas) */
+     position: sticky;
+     top: calc(var(--header-height) + 20px); /* Debajo del header + margen */
+     align-self: flex-start; /* Para que no estire si está en flex */
+     height: fit-content; /* Ajusta altura al contenido */
+     max-height: calc(100vh - var(--header-height) - 40px); /* Evita que sea más alto que la ventana */
+     overflow-y: auto; /* Scroll si hay muchos filtros */
+  }
+  
+  .title {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+    color: white;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+  }
+  
+  .filterGroup {
+    margin-bottom: 1.5rem;
+  }
+  
+  .groupLabel {
+    display: block;
+    font-weight: 600;
+    color: var(--primary-text-color);
+    margin-bottom: 0.8rem;
+    font-size: 1rem;
+  }
+  
+  .selectInput {
+      width: 100%;
+      padding: 8px 10px;
+      background-color: var(--tertiary-bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      color: var(--primary-text-color);
+      font-size: 0.9rem;
+      cursor: pointer;
+  }
+  .selectInput:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  }
+  
+  
+  .checkboxItem {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.6rem;
+  }
+  
+  .checkboxInput {
+    margin-right: 10px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    /* Estilos personalizados para checkbox (opcional pero mejora aspecto) */
+    accent-color: var(--accent-color); /* Color simple para navegadores modernos */
+  }
+  
+  .checkboxLabel {
+    font-size: 0.95rem;
+    color: var(--secondary-text-color);
+    cursor: pointer;
+    flex-grow: 1; /* Para que ocupe el espacio */
+  }
+  .checkboxLabel:hover {
+      color: var(--primary-text-color);
+  }

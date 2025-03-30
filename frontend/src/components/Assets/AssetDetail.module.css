@@ -1,0 +1,134 @@
+/* src/components/Assets/AssetDetail.module.css */
+.detailContainer {
+    display: flex;
+    gap: 40px;
+    background-color: var(--secondary-bg-color);
+    padding: 30px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+  }
+  
+  .imageColumn {
+    flex: 1 1 55%; /* Ocupa un poco más de la mitad */
+    max-width: 60%; /* Limita el ancho máximo */
+  }
+  
+  .mainImage {
+    width: 100%;
+    height: auto;
+    max-height: 70vh; /* Limita la altura de la imagen */
+    object-fit: contain; /* Muestra la imagen completa sin recortar */
+    border-radius: var(--border-radius);
+    background-color: var(--tertiary-bg-color); /* Fondo por si la imagen es transparente */
+  }
+  
+  .infoColumn {
+    flex: 1 1 45%; /* Ocupa el resto */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+  }
+  
+  .metaInfo {
+    display: flex;
+    flex-wrap: wrap; /* Para que los items pasen a la siguiente línea si no caben */
+    gap: 8px 20px; /* Espacio vertical y horizontal entre items */
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .metaItem {
+    font-size: 0.9rem;
+    color: var(--secondary-text-color);
+  }
+  
+  .metaItem strong {
+      color: var(--primary-text-color);
+      margin-right: 5px;
+  }
+  .metaItem a { /* Estilo para enlace de autor */
+      color: var(--accent-color);
+      text-decoration: none;
+  }
+  .metaItem a:hover {
+      text-decoration: underline;
+  }
+  
+  
+  .sectionTitle {
+      font-size: 1.3rem;
+      color: white;
+      margin-bottom: 0.8rem;
+      border-bottom: 2px solid var(--accent-color);
+      padding-bottom: 5px;
+      display: inline-block; /* Para que el borde solo ocupe el texto */
+  }
+  
+  .description {
+    margin-bottom: 2rem;
+    color: var(--primary-text-color);
+    line-height: 1.7;
+  }
+  
+  .actions {
+    margin-top: auto; /* Empuja las acciones hacia abajo */
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between; /* Separa descarga y acciones de dueño */
+    align-items: center;
+    flex-wrap: wrap; /* Para móviles */
+    gap: 15px;
+  }
+  
+  .ownerActions {
+      display: flex;
+      gap: 10px;
+  }
+  
+  /* Responsive */
+  @media (max-width: 992px) {
+      .detailContainer {
+          flex-direction: column;
+          padding: 20px;
+          gap: 30px;
+      }
+      .imageColumn, .infoColumn {
+          flex: 1 1 100%; /* Ocupan todo el ancho */
+          max-width: 100%;
+      }
+      .title {
+          font-size: 2rem;
+      }
+      .mainImage {
+          max-height: 50vh; /* Reduce altura en pantallas más pequeñas */
+      }
+  }
+  
+  @media (max-width: 600px) {
+      .title {
+          font-size: 1.8rem;
+      }
+      .metaInfo {
+          gap: 5px 15px;
+      }
+      .actions {
+          flex-direction: column;
+          align-items: stretch; /* Botones ocupan todo el ancho */
+      }
+      .ownerActions {
+          justify-content: space-between;
+      }
+      .ownerActions > * {
+          flex-grow: 1; /* Hace que botones editar/borrar ocupen espacio */
+          text-align: center;
+      }
+  }

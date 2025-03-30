@@ -1,0 +1,41 @@
+/* src/pages/RegisterPage.module.css */
+.registerContainer {
+    max-width: 550px; /* Un poco más ancho para el hint de contraseña */
+    margin: 40px auto;
+    padding: 30px 40px;
+    background-color: var(--tertiary-bg-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow-medium);
+    text-align: center;
+  }
+  
+  .title {
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    color: white;
+  }
+  
+  .loginLink {
+    margin-top: 2rem;
+    font-size: 0.95rem;
+    color: var(--secondary-text-color);
+  }
+  
+  .loginLink a {
+    color: var(--accent-color);
+    font-weight: bold;
+  }
+  
+  .loginLink a:hover {
+    text-decoration: underline;
+  }
+  
+  @media (max-width: 600px) {
+      .registerContainer {
+          margin: 20px 15px;
+          padding: 25px;
+      }
+      .title {
+          font-size: 1.8rem;
+      }
+  }

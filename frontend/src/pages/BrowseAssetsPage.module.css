@@ -1,0 +1,45 @@
+/* src/pages/BrowseAssetsPage.module.css */
+.browseLayout {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start; /* Alinea los items al inicio */
+  }
+  
+  .filterColumn {
+    flex: 0 0 280px; /* Ancho fijo para filtros, no crece, no encoge */
+    position: relative; /* Necesario para el sticky del panel */
+  }
+  
+  .resultsColumn {
+    flex: 1; /* Ocupa el espacio restante */
+    min-width: 0; /* Importante para que flexbox funcione bien con contenido que desborda */
+  }
+  
+  .pageTitle {
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+    color: white;
+  }
+  
+  .searchTerm {
+      font-size: 1.1rem;
+      color: var(--secondary-text-color);
+      margin-bottom: 1.5rem;
+      font-style: italic;
+  }
+  
+  /* Responsive: Hacer que los filtros se pongan arriba en pantallas pequeñas */
+  @media (max-width: 992px) {
+      .browseLayout {
+          flex-direction: column;
+          gap: 20px;
+      }
+      .filterColumn {
+          flex: 1 1 auto; /* Permite que ocupe el ancho */
+          width: 100%;
+          position: static; /* Quita el sticky */
+          max-height: none; /* Quita el max-height */
+          overflow-y: visible; /* Quita el scroll */
+      }
+       /* Opcional: Convertir filtros en un acordeón/modal en móvil */
+  }

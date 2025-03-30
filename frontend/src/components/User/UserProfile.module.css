@@ -1,0 +1,81 @@
+/* src/components/User/UserProfile.module.css */
+.profileContainer {
+    background-color: var(--tertiary-bg-color);
+    padding: 30px 40px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    max-width: 600px;
+    margin: 20px auto; /* Centrado */
+  }
+  
+  .title {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 2rem;
+    color: white;
+    font-size: 1.8rem;
+  }
+  
+  .formMessage {
+      text-align: center;
+      margin-bottom: 1.5rem;
+  }
+  
+  
+  /* Modo Vista */
+  .viewMode {
+      font-size: 1.1rem;
+      color: var(--primary-text-color);
+  }
+  .field {
+      margin-bottom: 1rem;
+      line-height: 1.6;
+  }
+  .fieldLabel {
+      color: var(--secondary-text-color);
+      margin-right: 10px;
+      min-width: 80px; /* Alineación básica */
+      display: inline-block;
+  }
+  .editButton {
+      margin-top: 1.5rem;
+      display: block; /* Ocupa su línea */
+      margin-left: auto; /* Intenta mover a la derecha */
+      margin-right: 0;
+  }
+  
+  
+  /* Modo Edición (Formulario) */
+  .form {
+      /* Estilos generales del form si son necesarios */
+  }
+  .buttonGroup {
+      display: flex;
+      gap: 15px;
+      margin-top: 2rem;
+      justify-content: flex-end; /* Alinea botones a la derecha */
+  }
+  .buttonGroup > button {
+      min-width: 100px; /* Ancho mínimo para botones */
+  }
+  
+  
+  @media (max-width: 600px) {
+      .profileContainer {
+          padding: 20px;
+      }
+      .title {
+          font-size: 1.6rem;
+      }
+      .buttonGroup {
+          flex-direction: column-reverse; /* Guardar abajo, Cancelar arriba */
+          align-items: stretch; /* Botones ocupan ancho */
+      }
+      .buttonGroup > button {
+          width: 100%;
+      }
+      .editButton {
+          width: 100%;
+          margin-left: 0;
+      }
+  }

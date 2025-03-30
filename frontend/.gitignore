@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+/node_modules
+
+# Production build directory
+build/
+
+# Documentation directory
+# /docs
+
+# Temp files
+*.tmp
+*.swp
+*~
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log
+
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional coverage directory
+coverage/
+
+# OS generated files
+.DS_Store
+Thumbs.db

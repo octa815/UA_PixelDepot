@@ -1,13 +1,17 @@
-const mongoose = require('mongoose');
+// backend/config/db.js
+import mongoose from 'mongoose';
+import config from './index.js';
 
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI);
-    console.log(`MongoDB Connected: ${conn.connection.host}`.cyan.underline);
+    mongoose.set('strictQuery', true); // Preparación para Mongoose 7
+    const conn = await mongoose.connect(config.mongoURI);
+
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.log(error);
-    process.exit(1);
+    console.error(`Error connecting to MongoDB: ${error.message}`);
+    process.exit(1); // Salir con error si no se puede conectar
   }
 };
 
-module.exports = connectDB;
+export default connectDB;

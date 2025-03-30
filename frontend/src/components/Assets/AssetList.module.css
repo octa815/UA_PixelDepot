@@ -1,0 +1,22 @@
+/* src/components/Assets/AssetList.module.css */
+.list {
+    display: grid;
+    /* Grid responsivo: mínimo 250px por columna, máximo 1fr */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px; /* Espacio entre tarjetas */
+    padding: 10px 0; /* Algo de padding vertical */
+  }
+  
+  .noAssets {
+    color: var(--secondary-text-color);
+    text-align: center;
+    margin-top: 40px;
+    font-size: 1.1rem;
+  }
+  
+  @media (max-width: 600px) {
+      .list {
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+          gap: 15px;
+      }
+  }

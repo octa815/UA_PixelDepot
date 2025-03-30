@@ -1,0 +1,44 @@
+/* src/pages/NotFoundPage.module.css */
+.notFoundContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 20px;
+    min-height: 60vh; /* Ocupa buena parte de la pantalla */
+  }
+  
+  .errorCode {
+    font-size: 6rem;
+    font-weight: bold;
+    color: var(--accent-color);
+    margin-bottom: 0;
+    line-height: 1;
+  }
+  
+  .errorMessage {
+    font-size: 2.5rem;
+    color: white;
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .description {
+    font-size: 1.2rem;
+    color: var(--secondary-text-color);
+    max-width: 500px;
+    margin-bottom: 30px;
+  }
+  
+  @media (max-width: 600px) {
+      .errorCode {
+          font-size: 5rem;
+      }
+      .errorMessage {
+          font-size: 1.8rem;
+      }
+      .description {
+          font-size: 1rem;
+      }
+  }

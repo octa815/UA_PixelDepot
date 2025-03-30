@@ -1,0 +1,130 @@
+/* src/pages/HomePage.module.css */
+.heroSection {
+    background: linear-gradient(rgba(10, 10, 10, 0.8), rgba(10, 10, 10, 0.9));
+    background-size: cover;
+    background-position: center;
+    padding: 80px 20px;
+    text-align: center;
+    color: white;
+    border-radius: 0 0 var(--border-radius) var(--border-radius); /* Redondea esquinas inferiores */
+    margin: -20px -20px 40px -20px; /* Expande para cubrir padding del container */
+  }
+  
+  .heroTitle {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  .heroSubtitle {
+    font-size: 1.3rem;
+    color: var(--secondary-text-color);
+    margin-bottom: 30px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .ctaButtons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap; /* Para móviles */
+  }
+  
+  .ctaButton { /* Estilo base para botones CTA */
+      padding: 12px 30px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border-radius: var(--border-radius);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      cursor: pointer;
+  }
+  
+  .ctaButtonPrimary {
+      composes: ctaButton; /* Hereda estilos de ctaButton */
+      background-color: var(--accent-color);
+      color: white;
+  }
+  .ctaButtonPrimary:hover,
+  .ctaButtonPrimary:focus {
+      background-color: var(--accent-hover-color);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+  }
+  
+  .ctaButtonSecondary {
+      composes: ctaButton;
+      background-color: transparent;
+      color: var(--primary-text-color);
+      border-color: var(--primary-text-color);
+  }
+  .ctaButtonSecondary:hover,
+  .ctaButtonSecondary:focus {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: white;
+      color: white;
+  }
+  
+  
+  .featuredAssets {
+    padding: 40px 0;
+  }
+  
+  .sectionTitle {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: var(--primary-text-color);
+    position: relative;
+    padding-bottom: 10px;
+  }
+  /* Línea decorativa debajo del título */
+  .sectionTitle::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background-color: var(--accent-color);
+      border-radius: 2px;
+  }
+  
+  .viewAllLinkContainer {
+      text-align: center;
+      margin-top: 30px;
+  }
+  
+  .viewAllLink {
+      color: var(--accent-color);
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 1.1rem;
+  }
+  .viewAllLink:hover {
+      text-decoration: underline;
+      color: var(--accent-hover-color);
+  }
+  
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .heroSection {
+        padding: 60px 15px;
+        margin: -20px -15px 30px -15px;
+    }
+    .heroTitle {
+      font-size: 2.2rem;
+    }
+    .heroSubtitle {
+      font-size: 1.1rem;
+    }
+    .sectionTitle {
+        font-size: 1.8rem;
+    }
+  }
