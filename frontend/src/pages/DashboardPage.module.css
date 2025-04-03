@@ -36,6 +36,14 @@
   color: var(--primary-text-color);
 }
 
+.downloadTitle {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: var(--primary-text-color);
+  }
+
+
+
 .noAssetsMessage {
     text-align: center;
     color: var(--secondary-text-color);

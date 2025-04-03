@@ -17,6 +17,7 @@ function DashboardPage() {
   const [myAssets, setMyAssets] = useState([]);
   const [loadingAssets, setLoadingAssets] = useState(true);
   const [assetError, setAssetError] = useState(null);
+  const [activeSection, setActiveSection] = useState("uploads"); // "uploads" o "downloads"
 
   const fetchMyAssets = useCallback(async () => {
     if (!user) return; // No hacer nada si no hay usuario
@@ -57,6 +58,55 @@ function DashboardPage() {
       </div>
 
        {message && <p className={`message success ${styles.infoMessage}`}>{message}</p>}
+      
+
+        {/* Botones para cambiar entre secciones 
+            <div className={styles.toggleButtons}>
+        <button 
+          className={activeSection === "uploads" ? styles.active : ""} 
+          onClick={() => setActiveSection("uploads")}
+        >
+          Assets subidos
+        </button>
+        <button 
+          className={activeSection === "downloads" ? styles.active : ""} 
+          onClick={() => setActiveSection("downloads")}
+        >
+          Historial de descargas
+        </button>
+      </div>
+
+       Renderizado condicional de secciones 
+      {activeSection === "uploads" && (
+        <section className={styles.assetsSection}>
+          <h2 className={styles.sectionTitle}>Mis assets subidos</h2>
+          {loadingAssets && <LoadingSpinner />}
+          {assetError && <p className="message error">{assetError}</p>}
+          {!loadingAssets && !assetError && myAssets.length > 0 ? (
+            <AssetList assets={myAssets} />
+          ) : (
+            <p className={styles.noAssetsMessage}>
+              Aún no has subido ningún asset. ¡<Link to="/upload">Empieza ahora</Link>!
+            </p>
+          )}
+        </section>
+      )}
+
+      {activeSection === "downloads" && (
+        <section className={styles.downloadSection}>
+          <h2 className={styles.downloadTitle}>Historial de descargas</h2>
+          {loadingAssets && <LoadingSpinner />}
+          {assetError && <p className="message error">{assetError}</p>}
+          {!loadingAssets && !assetError && myAssets.length > 0 ? (
+            <AssetList assets={myAssets} />
+          ) : (
+            <p className={styles.noAssetsMessage}>
+              Aún no has descargado ningún asset.
+            </p>
+          )}
+        </section>
+      )} */}
+
 
       <section className={styles.assetsSection}>
         <h2 className={styles.sectionTitle}>Mis assets subidos</h2>

@@ -238,7 +238,17 @@
   }
   
   /* Media Queries para Responsividad */
-  
+
+
+  @media (min-width: 479px) {
+    .logoText {
+        display: none; /* Mostrar texto del logo */
+    }
+    .headerCenter {
+        padding: 0 10px;
+    }
+  }
+
   @media (min-width: 768px) {
     .logoText {
         display: inline; /* Mostrar texto del logo */
