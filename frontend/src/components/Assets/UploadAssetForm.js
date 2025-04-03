@@ -38,33 +38,53 @@ function UploadAssetForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
-    if (!formData.titulo || !formData.tipo || !imagenDescriptiva || !archivoAsset) {
-      setError('Todos los campos (Título, Tipo, Imagen y Archivo del Asset) son obligatorios.');
-      return;
-    }
-
     setLoading(true);
+    console.log("Frontend: [Submit] Iniciando..."); // Log Inicio
 
-    // Crear objeto FormData para enviar archivos
+    // Crear FormData (como lo tenías antes de los cambios de URL)
     const data = new FormData();
     data.append('titulo', formData.titulo);
     data.append('descripcion', formData.descripcion);
     data.append('tipo', formData.tipo);
-    data.append('imagenDescriptiva', imagenDescriptiva); // El archivo de imagen
-    data.append('archivo', archivoAsset); // El archivo del asset
+    // Asegúrate que imagenDescriptiva y archivoAsset sean los File objects del estado
+    if (imagenDescriptiva) data.append('imagenDescriptiva', imagenDescriptiva);
+    if (archivoAsset) data.append('archivo', archivoAsset);
+    console.log("Frontend: [Submit] FormData creado. Llamando a assetService..."); // Log antes de llamar
 
     try {
-      const uploadedAsset = await assetService.uploadAsset(data);
-      // Redirige a la página del asset recién creado
-      navigate(`/assets/${uploadedAsset._id}`, { state: { message: '¡Asset subido con éxito!' } });
+      const uploadedAsset = await assetService.uploadAsset(data); // Llamada a la API
+      console.log("Frontend: [Submit] Respuesta OK recibida:", uploadedAsset); // Log Respuesta
+
+      // Verifica si la respuesta tiene el ID necesario para navegar
+      if (uploadedAsset && uploadedAsset._id) {
+          console.log(`Frontend: [Submit] Respuesta OK y tiene _id. Navegando a /assets/${uploadedAsset._id}`); // Log Navegación
+          navigate(`/assets/${uploadedAsset._id}`, { state: { message: '¡Asset subido con éxito!' } });
+          // NOTA: setLoading(false) se hará en finally, no es necesario aquí
+      } else {
+           // La respuesta fue exitosa (201) pero no trajo el _id esperado
+           console.error("Frontend: [Submit] Respuesta del backend OK (201) pero falta _id:", uploadedAsset);
+           setError("Error inesperado procesando la respuesta del servidor.");
+           setLoading(false); // Detenemos carga aquí porque no navegaremos
+      }
     } catch (err) {
-      console.error("Upload error:", err);
-      setError(err.message || err.error || 'Error al subir el asset. Inténtalo de nuevo.');
+      // Log detallado del error
+      console.error("Frontend: [Submit] ERROR en catch:", err);
+      console.error("Frontend: [Submit] Error response:", err.response?.data); // Muestra datos del error del backend si existen
+      let errorMessage = 'Error al subir el asset. Inténtalo de nuevo.';
+      // Intenta usar el mensaje del backend si existe
+      if (err.response && err.response.data && err.response.data.message) {
+          errorMessage = err.response.data.message;
+      } else if (err.message) {
+          errorMessage = err.message;
+      }
+      setError(errorMessage);
+      // setLoading(false) se hará en finally
     } finally {
-      setLoading(false);
+      // Este bloque SIEMPRE se ejecuta, funcione o falle el try/catch
+      console.log("Frontend: [Submit] Ejecutando finally, setLoading(false)");
+      setLoading(false); // <-- Asegura que el indicador de carga se quite
     }
-  };
+};
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>

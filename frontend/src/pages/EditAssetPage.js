@@ -1,6 +1,6 @@
 // src/pages/EditAssetPage.js
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import MainLayout from '../components/Layout/MainLayout';
 import EditAssetForm from '../components/Assets/EditAssetForm';
 import LoadingSpinner from '../components/Common/LoadingSpinner';
@@ -10,7 +10,6 @@ import styles from './EditAssetPage.module.css'; // Puedes crear estilos especí
 
 function EditAssetPage() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const { user } = useAuth(); // Para verificar permisos
   const [asset, setAsset] = useState(null);
   const [loading, setLoading] = useState(true);

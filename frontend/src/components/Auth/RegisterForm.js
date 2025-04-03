@@ -89,7 +89,7 @@ function RegisterForm() {
       />
        <p id="password-hint" className={styles.hint}>Mínimo 8 caracteres, con mayúscula, minúscula, número y símbolo (@$!%*?&).</p>
       <Input
-        label="Confirmar contraseña"
+        label="Confirmar Contraseña"
         type="password"
         id="register-confirmPassword"
         name="confirmPassword"

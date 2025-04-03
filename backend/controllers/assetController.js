@@ -1,304 +1,255 @@
 // backend/controllers/assetController.js
 import asyncHandler from 'express-async-handler';
 import Asset from '../models/Asset.js';
-import User from '../models/User.js'; // Para popular autor
-import path from 'path';
-import fs from 'fs'; // File system para borrar archivos
+// --- AÑADE import de cloudinary ---
+import { uploadStream, cloudinary } from '../config/cloudinary.js';
+// --- BORRA fs y path si ya no se usan ---
+// import path from 'path';
+// import fs from 'fs';
 
-// @desc    Crear (subir) un nuevo asset
-// @route   POST /api/assets
-// @access  Private
 const createAsset = asyncHandler(async (req, res) => {
-    console.log('Archivos recibidos por multer:', req.files);
-  // Los archivos están en req.files gracias a upload.fields en uploadMiddleware
+  console.log('--- Inicio Petición POST /api/assets ---');
+  console.log('Body recibido:', req.body);
+  console.log('Archivos recibidos en memoria:', req.files ? Object.keys(req.files) : 'Ninguno');
+
   const { titulo, descripcion, tipo } = req.body;
   const imagenFile = req.files?.imagenDescriptiva?.[0];
   const assetFile = req.files?.archivo?.[0];
 
-  // Validaciones
-  if (!titulo || !tipo) {
-      res.status(400);
-      throw new Error('Título y Tipo son obligatorios.');
-  }
-   if (!imagenFile) {
-      res.status(400);
-      throw new Error('Falta la imagen descriptiva.');
-  }
-  if (!assetFile) {
-      res.status(400);
-      throw new Error('Falta el archivo del asset.');
-  }
+  if (!titulo || !tipo) { res.status(400); throw new Error('Título y Tipo obligatorios.'); }
+  if (!imagenFile) { res.status(400); throw new Error('Falta imagen descriptiva.'); }
+  if (!assetFile) { res.status(400); throw new Error('Falta archivo del asset.'); }
 
+  let imagenUrl = '';
+  let archivoUrl = '';
+  let cloudinaryImagenPublicId = null;
+  let cloudinaryArchivoPublicId = null;
+  let cloudinaryArchivoResourceType = 'raw';
 
   try {
-        // Crear el asset en la BD, guardando las rutas relativas
+        console.log('[Paso 1] Iniciando subida de IMAGEN a Cloudinary...');
+        if (imagenFile) {
+            const imageOptions = { folder: `molamazo/${tipo}/images`, resource_type: 'image' };
+            const imageResult = await uploadStream(imagenFile.buffer, imageOptions);
+            imagenUrl = imageResult.secure_url;
+            cloudinaryImagenPublicId = imageResult.public_id;
+            console.log('[Paso 2] Imagen subida OK:', imagenUrl);
+        } else { console.log('[Paso 2] No se subió imagen.'); }
+
+        console.log('[Paso 3] Iniciando subida de ARCHIVO a Cloudinary...');
+        if (assetFile) {
+            if (assetFile.mimetype.startsWith('image/')) cloudinaryArchivoResourceType = 'image';
+            else if (assetFile.mimetype.startsWith('video/')) cloudinaryArchivoResourceType = 'video';
+            else if (assetFile.mimetype.startsWith('audio/')) cloudinaryArchivoResourceType = 'video'; // O 'raw'
+
+            const fileOptions = { folder: `molamazo/${tipo}/files`, resource_type: cloudinaryArchivoResourceType };
+            const fileResult = await uploadStream(assetFile.buffer, fileOptions);
+            archivoUrl = fileResult.secure_url;
+            cloudinaryArchivoPublicId = fileResult.public_id;
+            console.log('[Paso 4] Archivo subido OK:', archivoUrl);
+        } else { console.log('[Paso 4] No se subió archivo principal.'); }
+
+        console.log('[Paso 5] Creando documento del Asset en MongoDB...');
         const asset = new Asset({
-          titulo,
-          tipo,
-          descripcion,
-          // Guarda la ruta relativa desde la raíz del servidor o una base común
-          imagenDescriptiva: `uploads/images/${imagenFile.filename}`,
-          archivo: `uploads/assets/${assetFile.filename}`,
-          autor: req.user._id, // ID del usuario logueado (viene de 'protect' middleware)
+          titulo, tipo, descripcion,
+          imagenDescriptiva: imagenUrl, // URL Cloudinary
+          archivo: archivoUrl,          // URL Cloudinary
+          autor: req.user._id,
+          // Guarda estos si quieres poder borrar de Cloudinary después
+          // cloudinaryImagenPublicId: cloudinaryImagenPublicId,
+          // cloudinaryArchivoPublicId: cloudinaryArchivoPublicId,
+          // cloudinaryArchivoResourceType: cloudinaryArchivoResourceType,
         });
-
         const createdAsset = await asset.save();
+        console.log('[Paso 6] Asset guardado en MongoDB OK:', createdAsset._id);
 
-        // Populamos el autor antes de enviarlo de vuelta
         const populatedAsset = await Asset.findById(createdAsset._id).populate('autor', 'nombre email');
-
+        console.log('[Paso 7] Asset populado OK, enviando respuesta 201...');
         res.status(201).json(populatedAsset);
 
     } catch (error) {
-         // Si hay un error al guardar en BD, borramos los archivos subidos para no dejar basura
-        if (imagenFile) fs.unlink(imagenFile.path, (err) => { if(err) console.error("Error borrando imagen tras fallo:", err)});
-        if (assetFile) fs.unlink(assetFile.path, (err) => { if(err) console.error("Error borrando archivo tras fallo:", err)});
-
-        res.status(400); // Bad request (probablemente error de validación)
-        throw new Error(error.message || 'Error al crear el asset.');
+        console.error('!!!! ERROR CAPTURADO en createAsset !!!!:', error);
+        // Intenta borrar de Cloudinary si algo ya se subió
+        if (cloudinaryImagenPublicId) {
+            console.warn(`Intentando borrar imagen ${cloudinaryImagenPublicId} de Cloudinary tras error.`);
+            cloudinary.uploader.destroy(cloudinaryImagenPublicId, { resource_type: 'image' }).catch(err => console.error("Error borrando imagen de Cloudinary:", err));
+        }
+        if (cloudinaryArchivoPublicId) {
+            console.warn(`Intentando borrar archivo ${cloudinaryArchivoPublicId} (${cloudinaryArchivoResourceType}) de Cloudinary tras error.`);
+            cloudinary.uploader.destroy(cloudinaryArchivoPublicId, { resource_type: cloudinaryArchivoResourceType }).catch(err => console.error("Error borrando archivo de Cloudinary:", err));
+        }
+        res.status(400).json({ message: error.message || 'Error al crear el asset.' });
     }
 });
 
-// @desc    Obtener todos los assets (con filtros, paginación, ordenación)
-// @route   GET /api/assets
-// @access  Public (o Private si solo usuarios logueados pueden verlos)
 const getAssets = asyncHandler(async (req, res) => {
-  const pageSize = parseInt(req.query.limit) || 12; // Assets por página
-  const page = parseInt(req.query.page) || 1; // Página actual
+  console.log('[Backend GET /api/assets] Petición recibida. Query params:', req.query); // Log inicio y query params
 
-  // Filtros
-  const keyword = req.query.search
-    ? {
-        // Búsqueda por título (insensible a mayúsculas/minúsculas)
-        titulo: {
-          $regex: req.query.search,
-          $options: 'i',
-        },
-      }
-    : {};
-
-   const typeFilter = req.query.type
-    ? {
-        // Filtrar por tipo(s). req.query.type puede ser string o array si se pasa múltiple
-        tipo: { $in: Array.isArray(req.query.type) ? req.query.type : [req.query.type] }
-      }
-    : {};
-
-    // Combinar filtros
-    const filters = { ...keyword, ...typeFilter };
-
-
-  // Ordenación
+  const pageSize = parseInt(req.query.limit) || 12;
+  const page = parseInt(req.query.page) || 1;
+  const keyword = req.query.search ? { titulo: { $regex: req.query.search, $options: 'i' } } : {};
+  const typeFilter = req.query.type ? { tipo: { $in: Array.isArray(req.query.type) ? req.query.type : [req.query.type] } } : {};
+  const filters = { ...keyword, ...typeFilter };
   const sortOptions = {};
-  const sortBy = req.query.sortBy || 'createdAt'; // Campo por defecto
-  const order = req.query.order === 'asc' ? 1 : -1; // Orden por defecto descendente
+  const sortBy = req.query.sortBy || 'createdAt';
+  const order = req.query.order === 'asc' ? 1 : -1;
   sortOptions[sortBy] = order;
 
+  console.log('[Backend GET /api/assets] Filtros aplicados:', JSON.stringify(filters));
+  console.log('[Backend GET /api/assets] Opciones de orden:', JSON.stringify(sortOptions));
+  console.log(`[Backend GET /api/assets] Página: ${page}, Límite: ${pageSize}`);
 
   try {
-    const count = await Asset.countDocuments(filters); // Contar total de documentos que coinciden con filtros
-    const assets = await Asset.find(filters)
-      .populate('autor', 'nombre email') // Obtener nombre y email del autor
-      .limit(pageSize)
-      .skip(pageSize * (page - 1)) // Saltar documentos de páginas anteriores
-      .sort(sortOptions); // Aplicar ordenación
+    console.log('[Backend GET /api/assets] Contando documentos...');
+    const count = await Asset.countDocuments(filters); // <-- Posible punto de cuelgue/error
+    console.log(`[Backend GET /api/assets] Total de assets encontrados (count): ${count}`);
 
-    res.json({
+    console.log('[Backend GET /api/assets] Realizando find()...');
+    const assets = await Asset.find(filters)
+      .populate('autor', 'nombre email') // <-- Posible punto de cuelgue/error (si hay refs inválidas)
+      .limit(pageSize)
+      .skip(pageSize * (page - 1))
+      .sort(sortOptions); // <-- Posible punto de cuelgue/error
+    console.log(`[Backend GET /api/assets] Número de assets obtenidos en esta página: ${assets.length}`);
+
+    console.log('[Backend GET /api/assets] Enviando respuesta 200 OK...');
+    res.json({ // Envía respuesta OK
       assets,
       page,
-      totalPages: Math.ceil(count / pageSize), // Calcular total de páginas
-      totalAssets: count, // Opcional: devolver el número total
+      totalPages: Math.ceil(count / pageSize),
+      totalAssets: count,
     });
+
   } catch (error) {
-      res.status(500);
-      throw new Error('Error al obtener los assets.');
+      // --- Log y respuesta explícita en CATCH ---
+      console.error('[Backend GET /api/assets] !!!! ERROR CAPTURADO !!!!:', error);
+      res.status(500).json({ message: error.message || 'Error al obtener los assets.' }); // Envía respuesta de error
+      // Ya no usamos throw aquí porque enviamos la respuesta JSON
   }
 });
 
-// @desc    Obtener un asset por ID
-// @route   GET /api/assets/:id
-// @access  Public (o Private)
+// --- getAssetById --- (Usa la versión con logs y try/catch mejorado que te di antes)
 const getAssetById = asyncHandler(async (req, res) => {
-  try {
-    const asset = await Asset.findById(req.params.id).populate('autor', 'nombre email');
+     const assetId = req.params.id;
+     console.log(`[Backend GET /api/assets/:id] Petición recibida para ID: ${assetId}`);
+     try {
+       console.log(`[Backend GET /api/assets/:id] Buscando en BD...`);
+       const asset = await Asset.findById(assetId).populate('autor', 'nombre email');
+       console.log(`[Backend GET /api/assets/:id] Resultado de búsqueda: ${asset ? 'Encontrado' : 'NO Encontrado'}`);
+       if (asset) {
+         console.log(`[Backend GET /api/assets/:id] Enviando respuesta 200 OK...`);
+         res.json(asset);
+       } else {
+         console.log(`[Backend GET /api/assets/:id] Enviando respuesta 404 Not Found...`);
+         res.status(404); throw new Error('Asset no encontrado.');
+       }
+     } catch (error) {
+       console.error(`[Backend GET /api/assets/:id] !!!! ERROR CAPTURADO para ID ${assetId} !!!!:`, error);
+       if (error.kind === 'ObjectId' || error.name === 'CastError') {
+          console.log(`[Backend GET /api/assets/:id] Enviando respuesta 404 por ID inválido...`);
+          res.status(404).json({ message: 'Asset no encontrado (ID inválido).' });
+       } else {
+          console.log(`[Backend GET /api/assets/:id] Enviando respuesta 500 Internal Server Error...`);
+          res.status(500).json({ message: error.message || 'Error al obtener el asset.' });
+       }
+     }
+   });
 
-    if (asset) {
-      res.json(asset);
-    } else {
-      res.status(404);
-      throw new Error('Asset no encontrado.');
-    }
-  } catch (error) {
-      if (error.kind === 'ObjectId') {
-          res.status(404);
-          throw new Error('Asset no encontrado (ID inválido).');
-      }
-      res.status(500);
-      throw new Error('Error al obtener el asset.');
-  }
-});
 
-// @desc    Actualizar un asset
-// @route   PUT /api/assets/:id
-// @access  Private
+// --- updateAsset --- (Adaptado para subir opcionalmente a Cloudinary)
 const updateAsset = asyncHandler(async (req, res) => {
-   const { titulo, descripcion, tipo } = req.body;
-   const imagenFile = req.files?.imagenDescriptiva?.[0];
-   const assetFile = req.files?.archivo?.[0];
+    console.log('Update Body:', req.body);
+    console.log('Update Files:', req.files ? Object.keys(req.files) : 'Ninguno');
+    const { titulo, descripcion, tipo } = req.body;
+    const imagenFile = req.files?.imagenDescriptiva?.[0];
+    const assetFile = req.files?.archivo?.[0];
 
-  const asset = await Asset.findById(req.params.id);
+    const asset = await Asset.findById(req.params.id);
+    if (!asset) { res.status(404); throw new Error('Asset no encontrado.'); }
+    if (asset.autor.toString() !== req.user._id.toString()) { res.status(403); throw new Error('No autorizado.'); }
 
-  if (!asset) {
-    res.status(404);
-    throw new Error('Asset no encontrado.');
-  }
+    let newImageUrl = asset.imagenDescriptiva;
+    let newArchivoUrl = asset.archivo;
+    // Guarda IDs/Tipos antiguos si los vas a borrar de Cloudinary
+    // const oldImagePublicId = asset.cloudinaryImagenPublicId;
+    // const oldArchivoPublicId = asset.cloudinaryArchivoPublicId;
+    // const oldArchivoResourceType = asset.cloudinaryArchivoResourceType;
 
-  // Verificar si el usuario logueado es el autor del asset
-  if (asset.autor.toString() !== req.user._id.toString()) {
-    res.status(403); // Forbidden
-    throw new Error('No tienes permiso para editar este asset.');
-  }
+    try {
+        // Si se subió una NUEVA imagen
+        if (imagenFile) {
+            const imageOptions = { folder: `molamazo/${tipo || asset.tipo}/images`, resource_type: 'image' };
+            const imageResult = await uploadStream(imagenFile.buffer, imageOptions);
+            newImageUrl = imageResult.secure_url;
+            // asset.cloudinaryImagenPublicId = imageResult.public_id; // Actualiza si guardas ID
+            console.log('Nueva imagen subida a Cloudinary:', newImageUrl);
+            // Opcional: Borrar imagen antigua de Cloudinary
+            // if (oldImagePublicId) { await cloudinary.uploader.destroy(oldImagePublicId); }
+        }
 
-  // --- SIMPLIFICAR RUTAS ANTIGUAS ---
-  const oldImagePath = asset.imagenDescriptiva ? path.join(path.resolve(), asset.imagenDescriptiva) : null; // Quitamos 'backend'
-  const oldAssetPath = asset.archivo ? path.join(path.resolve(), asset.archivo) : null; // Quitamos 'backend'
-  // --- FIN SIMPLIFICAR ---
+        // Si se subió un NUEVO archivo
+        if (assetFile) {
+            let resourceType = 'raw';
+            if (assetFile.mimetype.startsWith('image/')) resourceType = 'image';
+            if (assetFile.mimetype.startsWith('video/')) resourceType = 'video';
+            if (assetFile.mimetype.startsWith('audio/')) resourceType = 'video';
+            const fileOptions = { folder: `molamazo/${tipo || asset.tipo}/files`, resource_type: resourceType };
+            const fileResult = await uploadStream(assetFile.buffer, fileOptions);
+            newArchivoUrl = fileResult.secure_url;
+            // asset.cloudinaryArchivoPublicId = fileResult.public_id; // Actualiza si guardas ID
+            // asset.cloudinaryArchivoResourceType = resourceType; // Actualiza si guardas tipo
+            console.log('Nuevo archivo subido a Cloudinary:', newArchivoUrl);
+            // Opcional: Borrar archivo antiguo de Cloudinary
+            // if (oldArchivoPublicId) { await cloudinary.uploader.destroy(oldArchivoPublicId, { resource_type: oldArchivoResourceType }); }
+        }
 
-  // Actualizar campos
-  asset.titulo = titulo || asset.titulo;
-  asset.tipo = tipo || asset.tipo;
-  asset.descripcion = descripcion !== undefined ? descripcion : asset.descripcion; // Permite borrar descripción
+        // Actualizar campos del asset en la BD
+        asset.titulo = titulo !== undefined ? titulo : asset.titulo;
+        asset.tipo = tipo !== undefined ? tipo : asset.tipo;
+        asset.descripcion = descripcion !== undefined ? descripcion : asset.descripcion;
+        asset.imagenDescriptiva = newImageUrl;
+        asset.archivo = newArchivoUrl;
 
-  let imageUpdated = false;
-  let assetFileUpdated = false;
-
-  if (imagenFile) {
-      asset.imagenDescriptiva = `uploads/images/${imagenFile.filename}`;
-      imageUpdated = true;
-  }
-  if (assetFile) {
-      asset.archivo = `uploads/assets/${assetFile.filename}`;
-      assetFileUpdated = true;
-  }
-
-  try {
         const updatedAsset = await asset.save();
-
-        // Si se guardó correctamente, borrar archivos antiguos si fueron reemplazados
-        if (imageUpdated && oldImagePath && fs.existsSync(oldImagePath)) {
-            fs.unlink(oldImagePath, (err) => { if(err) console.error("Error borrando imagen antigua:", err)});
-        }
-         if (assetFileUpdated && oldAssetPath && fs.existsSync(oldAssetPath)) {
-            fs.unlink(oldAssetPath, (err) => { if(err) console.error("Error borrando archivo antiguo:", err)});
-        }
-
-
         const populatedAsset = await Asset.findById(updatedAsset._id).populate('autor', 'nombre email');
         res.json(populatedAsset);
 
    } catch (error) {
-         // Si hay un error al guardar, borrar los NUEVOS archivos subidos si los hubo
-        if (imageUpdated && imagenFile) fs.unlink(imagenFile.path, (err) => { if(err) console.error("Error borrando nueva imagen tras fallo:", err)});
-        if (assetFileUpdated && assetFile) fs.unlink(assetFile.path, (err) => { if(err) console.error("Error borrando nuevo archivo tras fallo:", err)});
-
-        res.status(400); // Bad request
-        throw new Error(error.message || 'Error al actualizar el asset.');
+        console.error("Error en actualización/subida de asset:", error);
+        res.status(400); throw new Error(error.message || 'Error al actualizar el asset.');
    }
 });
 
-// @desc    Borrar un asset
-// @route   DELETE /api/assets/:id
-// @access  Private
+// --- deleteAsset --- (Quitado manejo de archivos locales, opcional añadir borrado Cloudinary)
 const deleteAsset = asyncHandler(async (req, res) => {
   const asset = await Asset.findById(req.params.id);
+  if (!asset) { res.status(404); throw new Error('Asset no encontrado.'); }
+  if (asset.autor.toString() !== req.user._id.toString()) { res.status(403); throw new Error('No autorizado.'); }
 
-  if (!asset) {
-    res.status(404);
-    throw new Error('Asset no encontrado.');
-  }
-
-  // Verificar propiedad
-  if (asset.autor.toString() !== req.user._id.toString()) {
-    res.status(403);
-    throw new Error('No tienes permiso para borrar este asset.');
-  }
-
-   // --- SIMPLIFICAR RUTAS A BORRAR ---
-   const imagePath = asset.imagenDescriptiva ? path.join(path.resolve(), asset.imagenDescriptiva) : null; // Quitamos 'backend'
-   const assetPath = asset.archivo ? path.join(path.resolve(), asset.archivo) : null; // Quitamos 'backend'
-   // --- FIN SIMPLIFICAR ---
+  // Opcional: Obtener IDs/Tipos de Cloudinary si los guardaste en el modelo
+  // const imagePublicId = asset.cloudinaryImagenPublicId;
+  // const archivoPublicId = asset.cloudinaryArchivoPublicId;
+  // const archivoResourceType = asset.cloudinaryArchivoResourceType || 'raw';
 
   try {
-    // Primero intenta borrar el registro de la BD
-    await asset.deleteOne(); // Usar deleteOne() en Mongoose 6+
+    await asset.deleteOne(); // Borra de la BD
 
-    // Si se borró de la BD, borra los archivos físicos
-    if (imagePath && fs.existsSync(imagePath)) {
-        fs.unlink(imagePath, (err) => { if(err) console.error("Error borrando imagen:", err)});
-    }
-    if (assetPath && fs.existsSync(assetPath)) {
-        fs.unlink(assetPath, (err) => { if(err) console.error("Error borrando archivo:", err)});
-    }
+    // --- Opcional: Borrar de Cloudinary ---
+    // Lógica para llamar a cloudinary.uploader.destroy(...) si tienes los IDs
+    // --- Fin Opcional ---
 
     res.json({ message: 'Asset borrado con éxito.' });
-
   } catch (error) {
-    res.status(500);
-    throw new Error('Error al borrar el asset.');
+    console.error("Error borrando asset:", error);
+    res.status(500); throw new Error('Error al borrar el asset.');
   }
 });
 
 
-// @desc    Descargar el archivo principal de un asset
-// @route   GET /api/assets/:id/download
-// @access  Private (o Public si cualquiera puede descargar, pero el PDF indica que no)
+// --- downloadAssetFile --- (Devuelve mensaje indicando que no aplica)
 const downloadAssetFile = asyncHandler(async (req, res) => {
-    const asset = await Asset.findById(req.params.id);
-
-    if (!asset) {
-        res.status(404);
-        throw new Error('Asset no encontrado.');
-    }
-
-     // El archivo principal se guarda en la propiedad 'archivo'
-    if (!asset.archivo) {
-        res.status(404);
-        throw new Error('El archivo principal para este asset no está disponible.');
-    }
-
-    // Construye la ruta completa al archivo en el servidor
-    const filePath = path.join(path.resolve(), 'backend', asset.archivo);
-
-    // Verifica si el archivo existe
-    if (fs.existsSync(filePath)) {
-        // Opcional: Incrementar contador de descargas
-        // asset.downloadCount = (asset.downloadCount || 0) + 1;
-        // await asset.save();
-
-        // Envía el archivo para descarga
-        // res.download() establece automáticamente cabeceras como Content-Disposition
-        res.download(filePath, (err) => {
-            if (err) {
-                console.error("Error al enviar archivo para descarga:", err);
-                // Evita enviar respuesta si ya se envió parte del archivo
-                if (!res.headersSent) {
-                    res.status(500).send('No se pudo descargar el archivo.');
-                }
-            }
-        });
-    } else {
-        console.error(`Archivo no encontrado en el servidor: ${filePath}`);
-        res.status(404);
-        throw new Error('Archivo del asset no encontrado en el servidor.');
-    }
+    console.warn(`Intento de descarga vía backend para asset ${req.params.id}. No aplicable con URLs externas.`);
+    res.status(404).json({ message: 'Ruta de descarga no disponible. Use el enlace directo del asset.' });
 });
 
-
-export {
-  createAsset,
-  getAssets,
-  getAssetById,
-  updateAsset,
-  deleteAsset,
-  downloadAssetFile,
-};
+export { createAsset, getAssets, getAssetById, updateAsset, deleteAsset, downloadAssetFile };

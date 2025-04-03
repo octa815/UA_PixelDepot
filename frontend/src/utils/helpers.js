@@ -23,22 +23,17 @@ export const formatDate = (dateString) => {
   // Asume que tu backend sirve las imágenes desde una ruta específica o devuelve URLs completas.
   // Si no, necesitarás construir la URL base.
   export const getImageUrl = (imagePath) => {
-    if (!imagePath) {
-        // Asegúrate que esta ruta a tu placeholder en 'public/images/' sea correcta
-        return '/images/placeholder.png';
+    // imagePath ahora es la URL completa de Cloudinary
+    if (!imagePath || typeof imagePath !== 'string') {
+        return '/images/placeholder.png'; // Ruta al placeholder en public/images/
     }
-    // Si imagePath ya es una URL completa (improbable en nuestro caso)
+    // Devuelve la URL directamente si es http/https
     if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
         return imagePath;
     }
-
-    // --- CORRECCIÓN ---
-    // Asumiendo que imagePath desde la BD es "uploads/images/file.png"
-    // Simplemente añadimos una barra al inicio.
-    // El proxy se encargará de dirigir "/uploads/images/file.png"
-    // a "http://localhost:5000/uploads/images/file.png"
-    return `/${imagePath}`;
-    // --- FIN CORRECCIÓN ---
+    // Si no, algo fue mal, devuelve placeholder
+    console.warn("getImageUrl recibió una ruta inválida:", imagePath);
+    return '/images/placeholder.png';
 }
   
   // Tipos de Assets definidos en el PDF

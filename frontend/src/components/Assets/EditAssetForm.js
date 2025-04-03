@@ -135,12 +135,7 @@ function EditAssetForm({ assetToEdit }) {
       />
        {/* Muestra imagen actual o nombre del nuevo archivo */}
        {imagenDescriptiva && <p className={styles.fileName}>Nuevo archivo: {imagenDescriptiva.name}</p>}
-       {!imagenDescriptiva && assetToEdit.imagenDescriptiva && (
-        <div className={styles.imagePreview}>
-          <p>Imagen actual:</p>
-          <img src={assetToEdit.imagenDescriptiva} alt="Imagen actual" className={styles.previewImage} />
-        </div>
-      )}
+       {!imagenDescriptiva && assetToEdit.imagenDescriptiva && <p className={styles.fileName}>Imagen actual: {assetToEdit.imagenDescriptiva.split('/').pop()}</p>}
 
 
       <Input

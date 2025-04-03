@@ -1,33 +1,27 @@
 // backend/routes/assetRoutes.js
 import express from 'express';
 import {
-  createAsset,
-  getAssets,
-  getAssetById,
-  updateAsset,
-  deleteAsset,
-  downloadAssetFile,
+  createAsset, getAssets, getAssetById, updateAsset, deleteAsset,
+  // downloadAssetFile // Ya no se usa
 } from '../controllers/assetController.js';
 import { protect } from '../middleware/authMiddleware.js';
-import { uploadAssetFiles } from '../middleware/uploadMiddleware.js'; // Middleware para subida
+// --- IMPORTAR Y USAR uploadAssetFiles ---
+import { uploadAssetFiles } from '../middleware/uploadMiddleware.js';
 
 const router = express.Router();
 
-// Rutas para obtener assets (públicas o privadas según decidas)
 router.route('/')
-  .get(getAssets) // GET /api/assets (con filtros, etc.)
-  // Para crear, requiere protección Y el middleware de subida ANTES del controlador
-  .post(protect, uploadAssetFiles, createAsset); // POST /api/assets
+  .get(getAssets)
+  // --- Usa uploadAssetFiles ANTES del controlador ---
+  .post(protect, uploadAssetFiles, createAsset);
 
-// Rutas para un asset específico por ID
 router.route('/:id')
-  .get(getAssetById) // GET /api/assets/:id
-  // Para actualizar, requiere protección Y el middleware de subida (por si cambian archivos)
-  .put(protect, uploadAssetFiles, updateAsset) // PUT /api/assets/:id
-  // Para borrar, solo requiere protección
-  .delete(protect, deleteAsset); // DELETE /api/assets/:id
+  .get(getAssetById)
+   // --- Usa uploadAssetFiles ANTES del controlador ---
+  .put(protect, uploadAssetFiles, updateAsset)
+  .delete(protect, deleteAsset);
 
-// Ruta específica para descargar el archivo principal (requiere protección)
-router.get('/:id/download', protect, downloadAssetFile); // GET /api/assets/:id/download
+// --- BORRAR o COMENTAR ruta download ---
+// router.get('/:id/download', protect, downloadAssetFile);
 
 export default router;

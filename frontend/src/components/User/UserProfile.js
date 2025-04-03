@@ -70,7 +70,7 @@ function UserProfile({ mode = 'view' }) {
 
   return (
     <div className={styles.profileContainer}>
-      <h2 className={styles.title}>{isEditing ? 'Editar perfil' : 'Mi perfil'}</h2>
+      <h2 className={styles.title}>{isEditing ? 'Editar Perfil' : 'Mi perfil'}</h2>
 
         {error && <p className={`message error ${styles.formMessage}`}>{error}</p>}
         {success && <p className={`message success ${styles.formMessage}`}>{success}</p>}

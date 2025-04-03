@@ -1,7 +1,6 @@
 // src/components/Layout/MainLayout.js
 import React from 'react';
 import Header from '../Common/Header';
-import Footer from '../Common/Footer'; // Asumiendo que creas un Footer
 import styles from './MainLayout.module.css';
 
 function MainLayout({ children }) {
