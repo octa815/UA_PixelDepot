@@ -128,6 +128,45 @@ function BrowseAssetsPage() {
         </div>
         <div className={styles.resultsColumn}>
           <h1 className={styles.pageTitle}>Explorar assets</h1>
+          <div className={styles.categoryGrid}>
+            {[
+              { name: '2D', label: 'Assets 2D' },
+              { name: '3D', label: 'Assets 3D' },
+              { name: 'Audio', label: 'Audio' },
+              { name: 'Video', label: 'Video' },
+              { name: 'Codigo', label: 'Codigo' },
+              ].map((cat) => {
+                const sampleAsset = assets.find(a =>
+                a.type?.toLowerCase().includes(cat.name.toLowerCase())
+                ); // Buscar uno con esa categoría
+                const imageUrl = sampleAsset?.image || sampleAsset?.thumbnailUrl || '';
+                return (
+                <div
+                key={cat.name}
+                className={styles.categoryCard}
+                onClick={() => {
+                const currentTypes = filters.type || [];
+                const isSelected = currentTypes.includes(cat.name);
+                const newTypes = isSelected
+                ? currentTypes.filter(t => t !== cat.name)
+                : [...currentTypes, cat.name];
+      
+                handleFilterChange({ ...filters, type: newTypes });
+              }}
+            >
+            {imageUrl ? (
+            <img src={imageUrl} alt={cat.label} />
+            ) : (
+              <div className={styles.placeholderImage}>Sin imagen</div>
+            )}
+                <span className={`${styles.categoryCard} ${
+            filters.type?.includes(cat.name) ? styles.activeCard : ''
+        }`}>{cat.label}</span>
+          </div>
+          );
+        })}
+        </div>
+                  
           {/* Aquí podrías mostrar los filtros activos o el término de búsqueda */}
           {filters.search && <p className={styles.searchTerm}>Resultados para: "{filters.search}"</p>}
 
