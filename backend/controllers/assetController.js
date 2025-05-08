@@ -55,10 +55,6 @@ const createAsset = asyncHandler(async (req, res) => {
           imagenDescriptiva: imagenUrl, // URL Cloudinary
           archivo: archivoUrl,          // URL Cloudinary
           autor: req.user._id,
-          // Guarda estos si quieres poder borrar de Cloudinary después
-          // cloudinaryImagenPublicId: cloudinaryImagenPublicId,
-          // cloudinaryArchivoPublicId: cloudinaryArchivoPublicId,
-          // cloudinaryArchivoResourceType: cloudinaryArchivoResourceType,
         });
         const createdAsset = await asset.save();
         console.log('[Paso 6] Asset guardado en MongoDB OK:', createdAsset._id);

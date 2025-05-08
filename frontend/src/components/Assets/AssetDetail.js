@@ -5,7 +5,7 @@ import { formatDate, getImageUrl } from '../../utils/helpers';
 import { useAuth } from '../../hooks/useAuth';
 import { Link } from 'react-router-dom';
 import Button from '../Common/Button';
-// BORRA: import * as assetService from '../../services/assetService';
+import CommentSection from '../Comments/CommentSection';
 
 function AssetDetail({ asset, onDelete }) {
   const { user, isAuthenticated } = useAuth();
@@ -15,8 +15,6 @@ function AssetDetail({ asset, onDelete }) {
   const imageUrl = getImageUrl(asset.imagenDescriptiva); // Usa la URL de Cloudinary
   const isOwner = isAuthenticated && user && asset.autor && user._id === asset.autor._id;
 
-  // BORRA: la función handleDownload
-
   return (
     <article className={styles.detailContainer}>
       <div className={styles.imageColumn}>
@@ -24,12 +22,10 @@ function AssetDetail({ asset, onDelete }) {
             src={imageUrl}
             alt={asset.titulo}
             className={styles.mainImage}
-            // onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.png'; }} // onError sigue siendo útil por si Cloudinary falla
         />
       </div>
 
       <div className={styles.infoColumn}>
-         {/* ... (titulo, metaInfo, description igual) ... */}
           <h1 className={styles.title}>{asset.titulo}</h1>
              <div className={styles.metaInfo}>
                 <span className={styles.metaItem}><strong>Tipo:</strong> {asset.tipo || 'N/A'}</span>
@@ -42,22 +38,18 @@ function AssetDetail({ asset, onDelete }) {
             </div>
 
         <div className={styles.actions}>
-             {/* --- CAMBIO: Enlace directo usando la URL del asset.archivo --- */}
              {asset.archivo && (
                 <a
-                    href={asset.archivo}      // <-- URL de Cloudinary/etc.
+                    href={asset.archivo}
                     target="_blank"
                     rel="noopener noreferrer"
-                    // className={styles.downloadLink} // Añade estilos si quieres
                 >
                     <Button variant="primary" disabled={!isAuthenticated}>
                        {isAuthenticated ? 'Ver/Descargar Asset' : 'Ver/Descargar (Requiere Login)'}
                     </Button>
                 </a>
              )}
-             {/* --- FIN CAMBIO --- */}
 
-            {/* Botones de Editar/Borrar (sin cambios) */}
             {isOwner && (
                 <div className={styles.ownerActions}>
                   <Link to={`/assets/${asset._id}/edit`}><Button variant="secondary" size="small">Editar</Button></Link>
@@ -65,6 +57,9 @@ function AssetDetail({ asset, onDelete }) {
                 </div>
             )}
         </div>
+
+        {/* Sección de comentarios */}
+        <CommentSection assetId={asset._id} />
       </div>
     </article>
   );

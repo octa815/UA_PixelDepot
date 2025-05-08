@@ -5,6 +5,7 @@ import MainLayout from '../components/Layout/MainLayout';
 import AssetDetail from '../components/Assets/AssetDetail';
 import LoadingSpinner from '../components/Common/LoadingSpinner';
 import * as assetService from '../services/assetService';
+import CommentSection from '../components/Comments/CommentSection';
 
 function AssetDetailPage() {
   const { id } = useParams();
@@ -73,7 +74,9 @@ function AssetDetailPage() {
 
       {!loading && !error && asset && (
         // Pasamos la función handleDelete al componente hijo
-        <AssetDetail asset={asset} onDelete={handleDelete} />
+        <>
+          <AssetDetail asset={asset} onDelete={handleDelete} />
+        </>
       )}
 
       {!loading && !error && !asset && (

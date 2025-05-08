@@ -12,6 +12,7 @@ import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import assetRoutes from './routes/assetRoutes.js';
+import commentRoutes from './routes/commentRoutes.js';
 
 // --- Calcula __dirname de forma fiable ---
 const __filename = fileURLToPath(import.meta.url);
@@ -23,8 +24,8 @@ const app = express();
 
 // --- Configuración HTTPS ---
 const httpsOptions = {
-  key: fs.readFileSync(path.join(__dirname, 'ssl', 'private-key.pem')), // <-- Ruta a tu clave privada
-  cert: fs.readFileSync(path.join(__dirname, 'ssl', 'certificate.pem')) // <-- Ruta a tu certificado
+  key: fs.readFileSync(path.join(__dirname, 'ssl', 'private-key.pem')),
+  cert: fs.readFileSync(path.join(__dirname, 'ssl', 'certificate.pem'))
   // Si usaste mkcert, los nombres serían algo como 'localhost+2-key.pem' y 'localhost+2.pem'
 };
 // --------------------------
@@ -39,6 +40,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/assets', assetRoutes);
+app.use('/api/comments', commentRoutes);
 
 // --- Servir archivos estáticos --- (Ya no es necesario para uploads si usas Cloudinary)
 // app.use('/uploads/images', ...);
