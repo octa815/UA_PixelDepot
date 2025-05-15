@@ -1,28 +1,60 @@
 // src/pages/HomePage.js
 import React, { useState, useEffect } from 'react';
 import styles from './HomePage.module.css';
-import MainLayout from '../components/Layout/MainLayout'; // Usar el layout
-import AssetList from '../components/Assets/AssetList'; // Componente para mostrar assets
-import * as assetService from '../services/assetService'; // Servicio para assets
-import { useAuth } from '../hooks/useAuth'; // Hook de autenticación
-import { Link } from 'react-router-dom';
-import LoadingSpinner from '../components/Common/LoadingSpinner'; // Indicador de carga
+import MainLayout from '../components/Layout/MainLayout';
+import AssetList from '../components/Assets/AssetList';
+import * as assetService from '../services/assetService';
+import { useAuth } from '../hooks/useAuth';
+import { Link, useNavigate } from 'react-router-dom'; // Importa useNavigate
+import LoadingSpinner from '../components/Common/LoadingSpinner';
+
+// Importa los estilos de BrowseAssetsPage para las tarjetas de categoría
+import categoryStyles from './BrowseAssetsPage.module.css';
+
+// Define o importa las categorías aquí
+const categories = [
+  {
+    name: '2D',
+    label: 'Assets 2D',
+    image: '/images/categories/categoria2d.jpg', // Asegúrate que estas rutas sean accesibles desde public/
+  },
+  {
+    name: '3D',
+    label: 'Assets 3D',
+    image: '/images/categories/categoria3d.jpg',
+  },
+  {
+    name: 'Audio',
+    label: 'Audio',
+    image: '/images/categories/audio.jpg',
+  },
+  {
+    name: 'Video',
+    label: 'Video',
+    image: '/images/categories/video.jpg',
+  },
+  {
+    name: 'Codigo',
+    label: 'Codigo',
+    image: '/images/categories/codigo.jpeg',
+  },
+];
 
 function HomePage() {
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { isAuthenticated, loading: authLoading } = useAuth(); // Obtiene estado de autenticación
+  const { isAuthenticated, loading: authLoading } = useAuth();
+  const navigate = useNavigate(); // Hook para navegación
 
   useEffect(() => {
     const fetchAssets = async () => {
       setLoading(true);
       setError(null);
       try {
-        // Obtener solo algunos assets destacados para la home, ej: los 6 más recientes
         const params = { limit: 6, sortBy: 'fechaSubida', order: 'desc' };
-        const fetchedAssets = await assetService.getAssets(params); // Llama a tu API
-        setAssets(fetchedAssets.assets || fetchedAssets); // Ajusta según la respuesta de tu API
+        const fetchedAssets = await assetService.getAssets(params);
+        setAssets(fetchedAssets.assets || fetchedAssets);
       } catch (err) {
         console.error("Error fetching assets:", err);
         setError("No se pudieron cargar los assets.");
@@ -34,13 +66,16 @@ function HomePage() {
     fetchAssets();
   }, []);
 
-  // Espera a que la autenticación termine de cargar antes de mostrar contenido sensible
   if (authLoading) {
     return <MainLayout><LoadingSpinner /></MainLayout>;
   }
 
+  const handleCategoryClick = (categoryName) => {
+    navigate(`/browse?type=${encodeURIComponent(categoryName)}`);
+  };
+
   return (
-    <MainLayout> {/* Envuelve el contenido con el layout principal */}
+    <MainLayout>
       <div className={styles.heroSection}>
         <h1 className={styles.heroTitle}>PixelDepot Asset Hub</h1>
         <p className={styles.heroSubtitle}>
@@ -57,6 +92,28 @@ function HomePage() {
          )}
       </div>
 
+      {/* Sección de Categorías */}
+      <section className={styles.categoriesSection}>
+        <h2 className={styles.sectionTitle}>Explorar por Categoría</h2>
+        <div className={categoryStyles.categoryGrid}> {/* Usa la clase de BrowseAssetsPage.module.css */}
+          {categories.map((cat) => (
+            <div
+              key={cat.name}
+              className={categoryStyles.categoryCard} // Usa la clase de BrowseAssetsPage.module.css
+              onClick={() => handleCategoryClick(cat.name)}
+            >
+              {/* Si la imagen no carga, puedes poner un placeholder o asegurar que la ruta sea correcta */}
+              {cat.image ? (
+                <img src={cat.image} alt={cat.label} className={categoryStyles.categoryImage} />
+              ) : (
+                <div className={categoryStyles.placeholderImage}>Sin imagen</div>
+              )}
+              <span className={categoryStyles.categoryLabel}>{cat.label}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <section className={styles.featuredAssets}>
         <h2 className={styles.sectionTitle}>Assets destacados</h2>
         {loading && <LoadingSpinner />}
@@ -67,15 +124,7 @@ function HomePage() {
         {!loading && !error && assets.length > 0 && (
           <AssetList assets={assets} />
         )}
-        {!loading && !error && assets.length > 0 && (
-           <div className={styles.viewAllLinkContainer}>
-               <Link to="/browse" className={styles.viewAllLink}>Ver todos los assets →</Link>
-           </div>
-        )}
       </section>
-
-      {/* Puedes añadir más secciones aquí (categorías, etc.) */}
-
     </MainLayout>
   );
 }
