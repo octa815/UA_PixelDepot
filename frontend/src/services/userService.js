@@ -1,13 +1,15 @@
-// src/services/userService.js
+// frontend/src/services/userService.js
 import axios from 'axios';
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://localhost:5000/';
-const API_URL = `${API_BASE_URL}/api/users`;
 
-// Obtener datos del usuario logueado (requiere token)
+const API_BASE_URL = process.env.NODE_ENV === 'production'
+  ? ''
+  : process.env.REACT_APP_API_BASE_URL || 'https://localhost:5000';
+
+const USERS_API_ENDPOINT = `${API_BASE_URL}/api/users`; // e.g., /api/users o https://localhost:5000/api/users
+
 export const getMe = async () => {
   try {
-    const response = await axios.get(`${API_URL}/me`);
-    // Asume que devuelve el objeto del usuario
+    const response = await axios.get(`${USERS_API_ENDPOINT}/me`);
     return response.data;
   } catch (error) {
     console.error("Error fetching current user:", error);
@@ -15,12 +17,9 @@ export const getMe = async () => {
   }
 };
 
-// Actualizar perfil del usuario logueado
 export const updateProfile = async (profileData) => {
   try {
-    // Usar PUT o PATCH según tu API
-    const response = await axios.put(`${API_URL}/me`, profileData);
-    // Asume que devuelve el usuario actualizado
+    const response = await axios.put(`${USERS_API_ENDPOINT}/me`, profileData);
     return response.data;
   } catch (error) {
     console.error("Error updating profile:", error);
@@ -28,36 +27,22 @@ export const updateProfile = async (profileData) => {
   }
 };
 
-// Opcional: Cambiar contraseña
 export const changePassword = async (passwordData) => {
     try {
-        // Endpoint específico para cambio de contraseña
-        const response = await axios.post(`${API_URL}/me/change-password`, passwordData);
-        return response.data; // Mensaje de éxito/error
+        const response = await axios.post(`${USERS_API_ENDPOINT}/me/change-password`, passwordData);
+        return response.data;
     } catch (error) {
         console.error("Error changing password:", error);
         throw error.response?.data || error.message;
     }
 };
 
-// Opcional: Obtener assets subidos por el usuario logueado
 export const getMyAssets = async (params = {}) => {
   try {
-    const response = await axios.get(`${API_URL}/me/assets`, { params });
+    const response = await axios.get(`${USERS_API_ENDPOINT}/me/assets`, { params });
     return response.data;
   } catch (error) {
     console.error("Error fetching user assets:", error);
     throw error.response?.data || error.message;
   }
 };
-
-// Opcional: Obtener un usuario por ID (si necesitas ver perfiles públicos)
-// export const getUserById = async (id) => {
-//   try {
-//     const response = await axios.get(`${API_URL}/${id}`);
-//     return response.data;
-//   } catch (error) {
-//     console.error(`Error fetching user ${id}:`, error);
-//     throw error.response?.data || error.message;
-//   }
-// };
