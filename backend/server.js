@@ -42,6 +42,16 @@ app.use('/api/users', userRoutes);
 app.use('/api/assets', assetRoutes);
 app.use('/api/comments', commentRoutes);
 
+// Serve frontend files
+if(process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/build')));
+
+  app.get('*', (req, res) => 
+    res.sendFile(
+      path.join(__dirname, '../','frontend','build', 'index.html')
+    )
+  )
+}
 // --- Servir archivos estáticos --- (Ya no es necesario para uploads si usas Cloudinary)
 // app.use('/uploads/images', ...);
 
