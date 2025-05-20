@@ -1,7 +1,7 @@
 // src/services/authService.js
 import axios from 'axios'; // O usa fetch
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://localhost:5000/';
-const API_URL = `${API_BASE_URL}/api/auth`;
+const API_URL = `${API_BASE_URL}/api`;
 
 // Añade un interceptor para incluir el token en las cabeceras si existe
 axios.interceptors.request.use(config => {
@@ -17,7 +17,7 @@ axios.interceptors.request.use(config => {
 
 export const login = async (credentials) => {
   try {
-    const response = await axios.post(`${API_URL}/login`, credentials);
+    const response = await axios.post(`${API_BASE_URL}/api/auth/login`, credentials);
     // Asume que tu backend devuelve { token: '...', user: { ... } }
     return response.data;
   } catch (error) {
@@ -28,7 +28,7 @@ export const login = async (credentials) => {
 
 export const register = async (userData) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/api/registro`, userData); // Endpoint original
+    const response = await axios.post(`${API_BASE_URL}/api/registro`, userData);// Endpoint original
     // Asume que devuelve algo, quizás { message: '...', user: {...}, token: '...' } o solo un mensaje
      return response.data; // Devuelve la respuesta completa
   } catch (error) {
