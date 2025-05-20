@@ -1,7 +1,7 @@
 // src/services/authService.js
 import axios from 'axios'; // O usa fetch
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://localhost:5000/';
-const API_URL = `${API_BASE_URL}/api`;
+const API_URL = `${API_BASE_URL}/api/auth`;
 
 // Añade un interceptor para incluir el token en las cabeceras si existe
 axios.interceptors.request.use(config => {
