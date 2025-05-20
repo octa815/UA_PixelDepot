@@ -1,7 +1,5 @@
 // backend/server.js
 import express from 'express';
-import https from 'https'; // <-- Importa HTTPS
-import fs from 'fs';       // <-- Importa File System
 import path from 'path';   // <-- Necesario para construir rutas
 import { fileURLToPath } from 'url';
 import cors from 'cors';
@@ -23,11 +21,11 @@ connectDB();
 const app = express();
 
 // --- Configuración HTTPS ---
-const httpsOptions = {
-  key: fs.readFileSync(path.join(__dirname, 'ssl', 'private-key.pem')),
-  cert: fs.readFileSync(path.join(__dirname, 'ssl', 'certificate.pem'))
-  // Si usaste mkcert, los nombres serían algo como 'localhost+2-key.pem' y 'localhost+2.pem'
-};
+// const httpsOptions = {
+//   key: fs.readFileSync(path.join(__dirname, 'ssl', 'private-key.pem')),
+//   cert: fs.readFileSync(path.join(__dirname, 'ssl', 'certificate.pem'))
+//   // Si usaste mkcert, los nombres serían algo como 'localhost+2-key.pem' y 'localhost+2.pem'
+// };
 // --------------------------
 
 // Middlewares (morgan, cors, body-parser)
@@ -51,6 +49,10 @@ if(process.env.NODE_ENV === 'production') {
       path.join(__dirname, '../','frontend','build', 'index.html')
     )
   )
+}else{
+  app.get('/', (req, res) => {
+    res.send('Por favor activa producción');
+  });
 }
 // --- Servir archivos estáticos --- (Ya no es necesario para uploads si usas Cloudinary)
 // app.use('/uploads/images', ...);

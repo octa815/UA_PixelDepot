@@ -1,7 +1,7 @@
 // src/services/userService.js
 import axios from 'axios';
-
-const API_URL = '/api/users'; // Ajusta la URL base de tu API de usuarios
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://localhost:5000/';
+const API_URL = `${API_BASE_URL}/api/auth`;
 
 // Obtener datos del usuario logueado (requiere token)
 export const getMe = async () => {
