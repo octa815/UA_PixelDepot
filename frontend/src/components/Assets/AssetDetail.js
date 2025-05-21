@@ -150,7 +150,7 @@ function AssetDetail({ asset, onDelete, onAssetUpdate }) {
               rel="noopener noreferrer"
             >
               <Button variant="primary" disabled={!isAuthenticated}>
-                {isAuthenticated ? 'Ver/Descargar Asset' : 'Ver/Descargar (Requiere Login)'}
+                {isAuthenticated ? 'Ver/Descargar asset' : 'Ver/Descargar (Requiere Login)'}
               </Button>
             </a>
           )}

@@ -74,7 +74,7 @@ function DashboardPage() {
           <div className={styles.profileInfo}>
             <h1 className={styles.profileName}>{user.nombre || "Usuario"}</h1>
             {/* Ubicación eliminada */}
-            <Link to="/profile/edit" className={styles.editProfileButton}>
+            <Link to="/profile" className={styles.editProfileButton}>
               Editar perfil
             </Link>
           </div>
