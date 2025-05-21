@@ -47,7 +47,7 @@ function Header() {
           </Link>
           {/* Navegación para pantallas grandes */}
           <nav className={styles.mainNav}>
-            <Link to="/" className={styles.navLink}>Inicio</Link>
+            {/* <Link to="/" className={styles.navLink}>Inicio</Link> */}
             <Link to="/browse" className={styles.navLink}>Explorar assets</Link>
             {isAuthenticated && (
               <Link to="/upload" className={styles.navLink}>Subir asset</Link>
@@ -106,7 +106,7 @@ function Header() {
       {/* Menú desplegable para móviles */}
       {isMobileMenuOpen && (
         <nav className={styles.mobileNav}>
-          <Link to="/" className={styles.mobileNavLink} onClick={closeMobileMenu}>Inicio</Link>
+          {/* <Link to="/" className={styles.mobileNavLink} onClick={closeMobileMenu}>Inicio</Link> */}
           <Link to="/browse" className={styles.mobileNavLink} onClick={closeMobileMenu}>Explorar assets</Link>
           {isAuthenticated && (
             <Link to="/upload" className={styles.mobileNavLink} onClick={closeMobileMenu}>Subir asset</Link>
