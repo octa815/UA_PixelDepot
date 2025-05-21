@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const API_BASE_URL = process.env.NODE_ENV === 'production'
   ? ''
-  : process.env.REACT_APP_API_BASE_URL || 'https://localhost:5000';
+  : process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
 const USERS_API_ENDPOINT = `${API_BASE_URL}/api/users`; // e.g., /api/users o https://localhost:5000/api/users
 

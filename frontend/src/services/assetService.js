@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const API_BASE_URL = process.env.NODE_ENV === 'production'
   ? '' // Para producción, las llamadas son relativas al mismo host
-  : process.env.REACT_APP_API_BASE_URL || 'https://localhost:5000'; // Para desarrollo local
+  : process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000'; // Para desarrollo local
 
 const ASSETS_API_ENDPOINT = `${API_BASE_URL}/api/assets`; // e.g., /api/assets o https://localhost:5000/api/assets
 
