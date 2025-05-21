@@ -61,7 +61,7 @@ function LoginForm() {
         disabled={loading}
       />
       <Button type="submit" variant="primary" size="large" disabled={loading} className={styles.submitButton}>
-        {loading ? 'Iniciando Sesión...' : 'Iniciar Sesión'}
+        {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
       </Button>
     </form>
   );

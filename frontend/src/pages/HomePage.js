@@ -94,7 +94,7 @@ function HomePage() {
 
       {/* Sección de Categorías */}
       <section className={styles.categoriesSection}>
-        <h2 className={styles.sectionTitle}>Explorar por Categoría</h2>
+        <h2 className={styles.sectionTitle}>Explorar por categoría</h2>
         <div className={categoryStyles.categoryGrid}> {/* Usa la clase de BrowseAssetsPage.module.css */}
           {categories.map((cat) => (
             <div
