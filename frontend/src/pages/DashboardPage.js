@@ -1,4 +1,3 @@
-// src/pages/DashboardPage.js
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import MainLayout from '../components/Layout/MainLayout';
@@ -6,122 +5,110 @@ import AssetList from '../components/Assets/AssetList';
 import LoadingSpinner from '../components/Common/LoadingSpinner';
 import Button from '../components/Common/Button';
 import { useAuth } from '../hooks/useAuth';
-import * as userService from '../services/userService'; // Para obtener assets del usuario
+import * as userService from '../services/userService';
 import styles from './DashboardPage.module.css';
+
+// Un SVG simple para el icono de subida, puedes reemplazarlo con uno de una librería
+const UploadIcon = () => (
+  <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#A0A0A0', marginBottom: '16px' }}>
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+    <polyline points="17 8 12 3 7 8"></polyline>
+    <line x1="12" y1="3" x2="12" y2="15"></line>
+  </svg>
+);
 
 function DashboardPage() {
   const { user } = useAuth();
   const location = useLocation();
-  const message = location.state?.message; // Mensaje opcional (ej. desde borrado)
+  const message = location.state?.message;
 
   const [myAssets, setMyAssets] = useState([]);
   const [loadingAssets, setLoadingAssets] = useState(true);
   const [assetError, setAssetError] = useState(null);
-  const [activeSection, setActiveSection] = useState("uploads"); // "uploads" o "downloads"
 
   const fetchMyAssets = useCallback(async () => {
-    if (!user) return; // No hacer nada si no hay usuario
+    if (!user) return;
     setLoadingAssets(true);
     setAssetError(null);
     try {
-      // Llama a la función del servicio para obtener los assets del usuario
-      const response = await userService.getMyAssets(); // O assetService si lo tienes ahí
-      setMyAssets(response.assets || response || []); // Ajusta según la respuesta
+      const response = await userService.getMyAssets();
+      setMyAssets(response.assets || response || []);
     } catch (err) {
       console.error("Error fetching user assets:", err);
       setAssetError("No se pudieron cargar tus assets.");
     } finally {
       setLoadingAssets(false);
     }
-  }, [user]); // Depende del usuario
+  }, [user]);
 
   useEffect(() => {
-    fetchMyAssets();
-  }, [fetchMyAssets]);
+    if (user) { // Solo buscar assets si hay un usuario
+      fetchMyAssets();
+    } else {
+      // Si no hay usuario, no hay assets que cargar, podrías limpiar el estado si es necesario
+      setMyAssets([]);
+      setLoadingAssets(false); // Importante para no quedar en estado de carga infinito
+    }
+  }, [user, fetchMyAssets]);
+
 
   if (!user) {
-      return <MainLayout><p>Cargando datos de usuario...</p></MainLayout>; // O redirigir a login
+    // Puedes mostrar un spinner, un mensaje para iniciar sesión, o redirigir
+    return (
+      <MainLayout>
+        <div className={styles.centerMessage}>
+          <p>Por favor, <Link to="/login">inicia sesión</Link> para ver tu panel.</p>
+        </div>
+      </MainLayout>
+    );
   }
+
+  // Asumimos que el objeto user tiene estas propiedades
+  const userAvatar = user.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nombre)}&background=random&color=fff&size=128`;
 
   return (
     <MainLayout>
-      <div className={styles.dashboardHeader}>
-        <h1 className={styles.title}>Dashboard de {user.nombre}</h1>
-        <div className={styles.headerActions}>
-           <Link to="/upload">
-             <Button variant="primary">Subir nuevo asset</Button>
-           </Link>
-           <Link to="/profile">
-               <Button variant="secondary">Editar perfil</Button>
-           </Link>
+      <div className={styles.profileContainer}>
+        <div className={styles.profileHeader}>
+          <img src={userAvatar} alt={user.nombre} className={styles.profileAvatar} />
+          <div className={styles.profileInfo}>
+            <h1 className={styles.profileName}>{user.nombre || "Usuario"}</h1>
+            {/* Ubicación eliminada */}
+            <Link to="/profile/edit" className={styles.editProfileButton}>
+              Editar perfil
+            </Link>
+          </div>
         </div>
-      </div>
 
-       {message && <p className={`message success ${styles.infoMessage}`}>{message}</p>}
-      
+        {/* Pestañas eliminadas */}
 
-        {/* Botones para cambiar entre secciones 
-            <div className={styles.toggleButtons}>
-        <button 
-          className={activeSection === "uploads" ? styles.active : ""} 
-          onClick={() => setActiveSection("uploads")}
-        >
-          Assets subidos
-        </button>
-        <button 
-          className={activeSection === "downloads" ? styles.active : ""} 
-          onClick={() => setActiveSection("downloads")}
-        >
-          Historial de descargas
-        </button>
-      </div>
+        {message && <p className={`message success ${styles.infoMessage}`}>{message}</p>}
 
-       Renderizado condicional de secciones 
-      {activeSection === "uploads" && (
+        {/* Sección de Assets Subidos (ahora es la única sección principal) */}
         <section className={styles.assetsSection}>
-          <h2 className={styles.sectionTitle}>Mis assets subidos</h2>
-          {loadingAssets && <LoadingSpinner />}
-          {assetError && <p className="message error">{assetError}</p>}
-          {!loadingAssets && !assetError && myAssets.length > 0 ? (
+          <h2 className={styles.sectionTitle}>Assets subidos</h2> {/* Título de la sección */}
+          {loadingAssets && <div className={styles.centerMessage}><LoadingSpinner /></div>}
+          {assetError && <p className={`message error ${styles.centerMessage}`}>{assetError}</p>}
+          
+          {!loadingAssets && !assetError && myAssets.length > 0 && (
             <AssetList assets={myAssets} />
-          ) : (
-            <p className={styles.noAssetsMessage}>
-              Aún no has subido ningún asset. ¡<Link to="/upload">Empieza ahora</Link>!
-            </p>
+          )}
+
+          {!loadingAssets && !assetError && myAssets.length === 0 && (
+            <div className={styles.emptyState}>
+              <UploadIcon />
+              <h3 className={styles.emptyStateTitle}>Sube tu primer asset</h3>
+              <p className={styles.emptyStateText}>
+                Demuestra de lo que eres capaz. <br />
+                Recoge feedback y sé parte de la comunidad.
+              </p>
+              <Link to="/upload">
+                <Button variant="primary" className={styles.emptyStateButton}>Sube tu primer asset</Button>
+              </Link>
+            </div>
           )}
         </section>
-      )}
-
-      {activeSection === "downloads" && (
-        <section className={styles.downloadSection}>
-          <h2 className={styles.downloadTitle}>Historial de descargas</h2>
-          {loadingAssets && <LoadingSpinner />}
-          {assetError && <p className="message error">{assetError}</p>}
-          {!loadingAssets && !assetError && myAssets.length > 0 ? (
-            <AssetList assets={myAssets} />
-          ) : (
-            <p className={styles.noAssetsMessage}>
-              Aún no has descargado ningún asset.
-            </p>
-          )}
-        </section>
-      )} */}
-
-
-      <section className={styles.assetsSection}>
-        <h2 className={styles.sectionTitle}>Mis assets subidos</h2>
-        {loadingAssets && <LoadingSpinner />}
-        {assetError && <p className="message error">{assetError}</p>}
-        {!loadingAssets && !assetError && (
-          <AssetList assets={myAssets} />
-        )}
-         {!loadingAssets && !assetError && myAssets.length === 0 && (
-             <p className={styles.noAssetsMessage}>Aún no has subido ningún asset. ¡<Link to="/upload">Empieza ahora</Link>!</p>
-         )}
-      </section>
-
-       {/* Podrías añadir más secciones, como assets descargados, favoritos, etc. */}
-
+      </div>
     </MainLayout>
   );
 }

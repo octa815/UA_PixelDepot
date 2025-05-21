@@ -1,76 +1,143 @@
-/* src/pages/DashboardPage.module.css */
-.dashboardHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    flex-wrap: wrap; /* Para que acciones pasen abajo en móvil */
-    gap: 15px;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.title {
-  font-size: 2.2rem;
-  color: white;
-  margin: 0; /* Quita margen por defecto */
-}
-
-.headerActions {
-    display: flex;
-    gap: 15px;
-}
-
-.infoMessage {
-    margin-bottom: 1.5rem;
-    text-align: center;
-}
-
-.assetsSection {
-    margin-top: 2rem;
-}
-
-.sectionTitle {
-  font-size: 1.8rem;
-  margin-bottom: 1.5rem;
-  color: var(--primary-text-color);
-}
-
-.downloadTitle {
-    font-size: 1.8rem;
-    margin-bottom: 1.5rem;
-    color: var(--primary-text-color);
+/* Estilos generales para el contenedor del perfil y contenido */
+.profileContainer {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    color: #E0E0E0;
   }
-
-
-
-.noAssetsMessage {
+  
+  .profileHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 40px; 
+    padding-bottom: 30px;
+    border-bottom: 1px solid #444;
+  }
+  
+  .profileAvatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 24px;
+    border: 2px solid #555;
+  }
+  
+  .profileInfo {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .profileName {
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin: 0 0 8px 0; /* Ajusta el margen inferior si es necesario tras quitar la ubicación */
+    color: #FFFFFF;
+  }
+  
+  /* .profileLocation ya no es necesario */
+  
+  .editProfileButton {
+    background-color: #3A3A3A;
+    color: #E0E0E0;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: 1px solid #505050;
+    transition: background-color 0.2s ease;
     text-align: center;
-    color: var(--secondary-text-color);
-    margin-top: 30px;
-    font-size: 1.1rem;
-}
-.noAssetsMessage a {
-    color: var(--accent-color);
-    font-weight: bold;
-}
-
-
-@media (max-width: 768px) {
-    .dashboardHeader {
-        flex-direction: column;
-        align-items: flex-start; /* Alinea a la izquierda */
-        gap: 20px;
-    }
-    .title {
-        font-size: 1.9rem;
-    }
-    .headerActions {
-        width: 100%;
-        justify-content: space-between; /* Distribuye botones */
-    }
-    .headerActions > * { /* Enlaces o botones */
-        flex-grow: 1; /* Ocupan espacio */
-        text-align: center;
-    }
-}
+    display: inline-block;
+    max-width: 120px;
+  }
+  
+  .editProfileButton:hover {
+    background-color: #4A4A4A;
+  }
+  
+  /* Pestañas eliminadas: .tabs, .tabButton, .activeTab ya no son necesarios */
+  
+  /* Contenido */
+  .assetsSection {
+    /* Estilos para la sección de assets */
+  }
+  
+  .sectionTitle { /* Estilo para el título "Assets subidos" */
+    font-size: 1.5rem;
+    color: #E0E0E0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #383838; /* Línea sutil debajo del título si quieres */
+  }
+  
+  
+  /* Estado vacío para Assets Subidos */
+  .emptyState {
+    background-color: #2C2C2C;
+    border: 1px dashed #555;
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    margin-top: 20px;
+  }
+  
+  .emptyStateTitle {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin-bottom: 8px;
+  }
+  
+  .emptyStateText {
+    font-size: 0.95rem;
+    color: #B0B0B0;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    max-width: 350px;
+  }
+  
+  .emptyStateButton {
+    background-color: #3A3A3A;
+    color: #E0E0E0;
+    padding: 10px 20px;
+  }
+  .emptyStateButton:hover {
+    background-color: #4A4A4A;
+  }
+  
+  /* Mensajes */
+  .infoMessage {
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 4px;
+  }
+  
+  .centerMessage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 150px;
+    color: #A0A0A0;
+  }
+  .centerMessage p {
+    margin-top: 10px;
+  }
+  .centerMessage a { /* Estilo para el enlace de login en el mensaje centrado */
+    color: #007BFF; /* O tu color primario */
+    text-decoration: underline;
+  }
+  
+  /*
+  body {
+    background-color: #1E1E1E;
+    color: #E0E0E0;
+  }
+  */
