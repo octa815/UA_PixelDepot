@@ -3,20 +3,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
+// --- IMPORTAR ESTILOS DE SLICK CAROUSEL ---
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+// --- FIN IMPORTAR ESTILOS ---
+
 // 1. Importa los estilos globales PRIMERO para que otros estilos los puedan sobreescribir si es necesario
-import './styles/global.css';
+import './styles/global.css'; //
 
 // 2. Importa tu componente principal App (que contiene el Router)
-import App from './App';
+import App from './App'; //
 
 // 3. Importa el proveedor de contexto de autenticación
-import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider } from './contexts/AuthContext'; // [cite: 24]
 
 // 4. Importa la función para medir el rendimiento (opcional pero estándar de CRA)
-import reportWebVitals from './reportWebVitals';
+import reportWebVitals from './reportWebVitals'; //
 
 // 5. Busca el div con id="root" en tu public/index.html
-const rootElement = document.getElementById('root');
+const rootElement = document.getElementById('root'); // [cite: 22]
 
 // 6. Crea el punto de renderizado principal de React 18+
 const root = ReactDOM.createRoot(rootElement);

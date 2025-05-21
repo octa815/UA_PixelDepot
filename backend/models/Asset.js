@@ -28,6 +28,10 @@ const assetSchema = new mongoose.Schema(
       type: String,
       required: [true, 'La imagen descriptiva es obligatoria.'],
     },
+    // --- NUEVO CAMPO PARA IMÁGENES ADICIONALES DEL CARRUSEL ---
+    imagenesAdicionales: [{ // Array de URLs de Cloudinary
+      type: String,
+    }],
     archivo: { // Guardará la RUTA al archivo principal del asset
       type: String,
       required: [true, 'El archivo del asset es obligatorio.'],
@@ -37,6 +41,15 @@ const assetSchema = new mongoose.Schema(
       required: true,
       ref: 'User', // Referencia al modelo User
     },
+    // --- NUEVOS CAMPOS PARA LIKES/DISLIKES ---
+    likes: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User' // Referencia a usuarios que dieron like
+    }],
+    dislikes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User' // Referencia a usuarios que dieron dislike
+    }],
     fechaSubida: { // Gestionado por timestamps, pero podemos mantenerlo si se quiere explícito
         type: Date,
         default: Date.now,

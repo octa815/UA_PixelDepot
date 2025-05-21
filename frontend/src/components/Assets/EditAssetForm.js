@@ -4,23 +4,23 @@ import { useNavigate } from 'react-router-dom';
 import styles from './AssetForm.module.css';
 import Input from '../Common/Input';
 import Button from '../Common/Button';
-import { ASSET_TYPES } from '../../utils/helpers';
+import { ASSET_TYPES, getImageUrl } from '../../utils/helpers'; // Importa getImageUrl
 import * as assetService from '../../services/assetService';
 
-// Recibe el asset a editar como prop
 function EditAssetForm({ assetToEdit }) {
   const [formData, setFormData] = useState({
     titulo: '',
     descripcion: '',
     tipo: ASSET_TYPES[0],
   });
-  const [imagenDescriptiva, setImagenDescriptiva] = useState(null); // Nuevo archivo de imagen opcional
-  const [archivoAsset, setArchivoAsset] = useState(null); // Nuevo archivo de asset opcional
+  const [imagenDescriptivaFile, setImagenDescriptivaFile] = useState(null);
+  const [archivoAssetFile, setArchivoAssetFile] = useState(null);
+  // --- NUEVO ESTADO PARA NUEVAS IMÁGENES ADICIONALES ---
+  const [nuevasImagenesAdicionales, setNuevasImagenesAdicionales] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Cargar datos iniciales del asset cuando el componente se monta o assetToEdit cambia
   useEffect(() => {
     if (assetToEdit) {
       setFormData({
@@ -28,9 +28,9 @@ function EditAssetForm({ assetToEdit }) {
         descripcion: assetToEdit.descripcion || '',
         tipo: assetToEdit.tipo || ASSET_TYPES[0],
       });
-      // No precargamos los archivos, el usuario debe seleccionarlos si quiere cambiarlos
-       setImagenDescriptiva(null);
-       setArchivoAsset(null);
+      setImagenDescriptivaFile(null);
+      setArchivoAssetFile(null);
+      setNuevasImagenesAdicionales([]); // Resetear al cargar
     }
   }, [assetToEdit]);
 
@@ -41,46 +41,48 @@ function EditAssetForm({ assetToEdit }) {
   };
 
   const handleImageChange = (e) => {
-    setImagenDescriptiva(e.target.files[0]);
+    setImagenDescriptivaFile(e.target.files[0]);
     setError('');
   };
 
   const handleAssetFileChange = (e) => {
-    setArchivoAsset(e.target.files[0]);
+    setArchivoAssetFile(e.target.files[0]);
+    setError('');
+  };
+
+  // --- NUEVO HANDLER PARA NUEVAS IMÁGENES ADICIONALES ---
+  const handleNuevasImagenesAdicionalesChange = (e) => {
+    setNuevasImagenesAdicionales([...e.target.files]);
     setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
-    if (!formData.titulo || !formData.tipo) {
-      setError('El título y el tipo son obligatorios.');
-      return;
-    }
-
     setLoading(true);
 
-    // Crear objeto FormData SOLO si hay archivos nuevos, o enviar JSON si no los hay
-    // O siempre enviar FormData y que el backend ignore campos vacíos/null
     const data = new FormData();
     data.append('titulo', formData.titulo);
     data.append('descripcion', formData.descripcion);
     data.append('tipo', formData.tipo);
-    if (imagenDescriptiva) {
-      data.append('imagenDescriptiva', imagenDescriptiva);
-    }
-    if (archivoAsset) {
-      data.append('archivo', archivoAsset);
-    }
 
-    // Si no hay archivos nuevos, podrías enviar JSON:
-    // const dataToSend = { ...formData };
-    // let useFormData = imagenDescriptiva || archivoAsset;
+    if (imagenDescriptivaFile) {
+      data.append('imagenDescriptiva', imagenDescriptivaFile);
+    }
+    if (archivoAssetFile) {
+      data.append('archivo', archivoAssetFile);
+    }
+    // --- AÑADIR NUEVAS IMÁGENES ADICIONALES AL FORMDATA SI EXISTEN ---
+    if (nuevasImagenesAdicionales.length > 0) {
+      for (let i = 0; i < nuevasImagenesAdicionales.length; i++) {
+        data.append('imagenesAdicionales', nuevasImagenesAdicionales[i]);
+      }
+      console.log(`Frontend: [Edit Submit] ${nuevasImagenesAdicionales.length} nuevas imágenes adicionales añadidas.`);
+    }
+    // Si no se añaden nuevas, el backend no debería tocar el array existente de imagenesAdicionales.
 
     try {
-        // Usa assetService.updateAsset, pasando el ID
-      const updatedAsset = await assetService.updateAsset(assetToEdit._id, data); // O dataToSend si es JSON
+      const updatedAsset = await assetService.updateAsset(assetToEdit._id, data);
       navigate(`/assets/${updatedAsset._id}`, { state: { message: '¡Asset actualizado con éxito!' } });
     } catch (err) {
       console.error("Update error:", err);
@@ -91,7 +93,7 @@ function EditAssetForm({ assetToEdit }) {
   };
 
   if (!assetToEdit) {
-      return <p>Cargando datos del asset...</p> // O un spinner
+    return <p>Cargando datos del asset...</p>;
   }
 
   return (
@@ -110,7 +112,7 @@ function EditAssetForm({ assetToEdit }) {
         disabled={loading}
       />
 
-       <div className={styles.inputGroup}>
+      <div className={styles.inputGroup}>
         <label htmlFor="tipo" className={styles.label}>Tipo de asset <span className={styles.required}>*</span></label>
         <select id="tipo" name="tipo" value={formData.tipo} onChange={handleChange} required disabled={loading} className={styles.selectInput}>
           {ASSET_TYPES.map(type => (
@@ -124,32 +126,66 @@ function EditAssetForm({ assetToEdit }) {
         <textarea id="descripcion" name="descripcion" value={formData.descripcion} onChange={handleChange} placeholder="Detalles sobre el asset..." disabled={loading} rows="5" className={styles.textareaInput} />
       </div>
 
+      <p className={styles.currentFilesTitle}>Imagen descriptiva principal actual:</p>
+      {assetToEdit.imagenDescriptiva && (
+        <img src={getImageUrl(assetToEdit.imagenDescriptiva)} alt="Principal actual" className={styles.currentImagePreview} />
+      )}
       <Input
-        label="Nueva imagen descriptiva (Opcional)"
+        label="Nueva imagen descriptiva principal (Opcional, reemplaza la actual)"
         type="file"
-        id="imagenDescriptiva"
-        name="imagenDescriptiva"
+        id="imagenDescriptiva" // Asegúrate que el id sea único si es necesario
+        name="imagenDescriptivaFile" // Cambiado para evitar conflicto de nombre con el string del assetToEdit
         onChange={handleImageChange}
         disabled={loading}
-        accept="image/jpeg, image/png, image/svg+xml"
+        accept="image/jpeg, image/png, image/svg+xml, image/webp"
       />
-       {/* Muestra imagen actual o nombre del nuevo archivo */}
-       {imagenDescriptiva && <p className={styles.fileName}>Nuevo archivo: {imagenDescriptiva.name}</p>}
-       {!imagenDescriptiva && assetToEdit.imagenDescriptiva && <p className={styles.fileName}>Imagen actual: {assetToEdit.imagenDescriptiva.split('/').pop()}</p>}
+      {imagenDescriptivaFile && <p className={styles.fileName}>Nuevo archivo: {imagenDescriptivaFile.name}</p>}
 
 
+      {/* --- MOSTRAR IMÁGENES ADICIONALES ACTUALES Y NUEVO INPUT --- */}
+      <p className={styles.currentFilesTitle}>Imágenes adicionales actuales:</p>
+      {assetToEdit.imagenesAdicionales && assetToEdit.imagenesAdicionales.length > 0 ? (
+        <div className={styles.currentThumbnails}>
+          {assetToEdit.imagenesAdicionales.map((imgUrl, index) => (
+            <img key={index} src={getImageUrl(imgUrl)} alt={`Adicional ${index + 1}`} className={styles.thumbnailPreview} />
+          ))}
+        </div>
+      ) : (
+        <p className={styles.fileName}>No hay imágenes adicionales actualmente.</p>
+      )}
       <Input
-        label="Nuevo archivo del asset (Opcional)"
+        label="Nuevas imágenes adicionales (Opcional, reemplazarán a las actuales)"
         type="file"
-        id="archivoAsset"
-        name="archivoAsset"
+        id="nuevasImagenesAdicionales"
+        name="nuevasImagenesAdicionales"
+        onChange={handleNuevasImagenesAdicionalesChange}
+        disabled={loading}
+        accept="image/jpeg, image/png, image/svg+xml, image/webp"
+        multiple
+      />
+      {nuevasImagenesAdicionales.length > 0 && (
+        <div className={styles.fileNamePreview}>
+          <p>{nuevasImagenesAdicionales.length} nuevas imágenes adicionales seleccionadas:</p>
+          <ul>
+            {Array.from(nuevasImagenesAdicionales).map((file, index) => (
+              <li key={index}>{file.name}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {/* --- FIN SECCIÓN IMÁGENES ADICIONALES --- */}
+
+      <p className={styles.currentFilesTitle}>Archivo principal actual:</p>
+      {assetToEdit.archivo && <p className={styles.fileName}>{assetToEdit.archivo.split('/').pop()}</p>}
+      <Input
+        label="Nuevo archivo del asset (Opcional, reemplaza el actual)"
+        type="file"
+        id="archivoAsset" // Asegúrate que el id sea único
+        name="archivoAssetFile" // Cambiado
         onChange={handleAssetFileChange}
         disabled={loading}
       />
-      {/* Muestra nombre del archivo actual o del nuevo */}
-      {archivoAsset && <p className={styles.fileName}>Nuevo archivo: {archivoAsset.name}</p>}
-      {!archivoAsset && assetToEdit.archivo && <p className={styles.fileName}>Archivo actual: {assetToEdit.archivo.split('/').pop()}</p>}
-
+      {archivoAssetFile && <p className={styles.fileName}>Nuevo archivo: {archivoAssetFile.name}</p>}
 
       <Button type="submit" variant="primary" size="large" disabled={loading} className={styles.submitButton}>
         {loading ? 'Actualizando...' : 'Guardar cambios'}

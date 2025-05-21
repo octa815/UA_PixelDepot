@@ -1,14 +1,13 @@
 // backend/middleware/uploadMiddleware.js
 import multer from 'multer';
 
-// --- CAMBIO: Usar almacenamiento en memoria ---
+// Usar almacenamiento en memoria
 const storage = multer.memoryStorage();
-// --- FIN CAMBIO ---
 
-// Filtro de archivos (igual, pero sin usar path si no es necesario)
+// Filtro de archivos
 function fileFilter(req, file, cb) {
-  if (file.fieldname === 'imagenDescriptiva') {
-    // Simplificado: Confiar más en mimetype si está disponible
+  // Permitir imágenes para imagenDescriptiva e imagenesAdicionales
+  if (file.fieldname === 'imagenDescriptiva' || file.fieldname === 'imagenesAdicionales') {
     const allowedImageTypes = /jpeg|jpg|png|gif|svg\+xml|webp/;
     if (allowedImageTypes.test(file.mimetype)) {
       return cb(null, true);
@@ -16,23 +15,24 @@ function fileFilter(req, file, cb) {
       cb(new Error('Error: Solo se permiten archivos de imagen (jpeg, jpg, png, gif, svg, webp)!'), false);
     }
   } else if (file.fieldname === 'archivo') {
-    cb(null, true); // Aceptar otros tipos para 'archivo'
+    cb(null, true); // Aceptar cualquier tipo para 'archivo' (el principal del asset)
   } else {
-      cb(new Error('Campo de archivo no reconocido'), false);
+    cb(new Error('Campo de archivo no reconocido'), false);
   }
 }
 
 // Crear instancia de Multer
 const upload = multer({
-  storage: storage, // <-- Usa memoryStorage
-  limits: { fileSize: 50 * 1024 * 1024 }, // Límite (ej: 50MB) ¡AJUSTA!
+  storage: storage,
+  limits: { fileSize: 50 * 1024 * 1024 }, // Límite (ej: 50MB) ¡AJUSTA SEGÚN NECESIDAD!
   fileFilter: fileFilter,
 });
 
-// Middleware (igual)
+// Middleware para manejar los diferentes campos de archivo
 const uploadAssetFiles = upload.fields([
-  { name: 'imagenDescriptiva', maxCount: 1 },
-  { name: 'archivo', maxCount: 1 },
+  { name: 'imagenDescriptiva', maxCount: 1 }, // Imagen principal
+  { name: 'archivo', maxCount: 1 },           // Archivo principal del asset
+  { name: 'imagenesAdicionales', maxCount: 10 } // Nuevo: hasta 10 imágenes adicionales
 ]);
 
 export { uploadAssetFiles };

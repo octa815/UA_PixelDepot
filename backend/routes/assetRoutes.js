@@ -1,7 +1,7 @@
 // backend/routes/assetRoutes.js
 import express from 'express';
 import {
-  createAsset, getAssets, getAssetById, updateAsset, deleteAsset,
+  createAsset, getAssets, getAssetById, updateAsset, deleteAsset, likeAsset, dislikeAsset,
   // downloadAssetFile // Ya no se usa
 } from '../controllers/assetController.js';
 import { protect } from '../middleware/authMiddleware.js';
@@ -21,6 +21,8 @@ router.route('/:id')
   .put(protect, uploadAssetFiles, updateAsset)
   .delete(protect, deleteAsset);
 
+router.route('/:id/like').put(protect, likeAsset);
+router.route('/:id/dislike').put(protect, dislikeAsset);
 // --- BORRAR o COMENTAR ruta download ---
 // router.get('/:id/download', protect, downloadAssetFile);
 

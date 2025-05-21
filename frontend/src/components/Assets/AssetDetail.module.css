@@ -11,8 +11,13 @@
   .imageColumn {
     flex: 1 1 55%; /* Ocupa un poco más de la mitad */
     max-width: 60%; /* Limita el ancho máximo */
+    display: flex; /* Ayuda a controlar el tamaño del carrusel */
+    flex-direction: column; /* Alinear contenido verticalmente */
+    min-width: 0; /* Previene que el carrusel se desborde si es muy ancho */
   }
   
+
+
   .mainImage {
     width: 100%;
     height: auto;
@@ -94,6 +99,156 @@
       gap: 10px;
   }
   
+  .carousel {
+    width: 100%; /* Asegura que el carrusel ocupe el ancho de la columna */
+    margin: 0 auto; /* Centrar el carrusel si es necesario */
+  }
+  
+  .carouselSlide {
+    outline: none; /* Quita el borde azul al hacer focus en un slide */
+  }
+  
+  .carouselSlide img { /* Estilo para las imágenes dentro de cada slide */
+    width: 100%;
+    height: auto; /* Mantiene la proporción */
+    max-height: 70vh; /* Limita la altura de la imagen */
+    object-fit: contain; /* Muestra la imagen completa sin recortar */
+    border-radius: var(--border-radius); /* Si quieres bordes redondeados en las imágenes */
+    background-color: var(--tertiary-bg-color); /* Fondo por si la imagen es transparente */
+    display: block; /* Elimina espacio extra debajo de la imagen */
+    margin: 0 auto; /* Centra la imagen si es más pequeña que el slide */
+  }
+  
+  /* Heredamos estilos de mainImage para las imágenes del carrusel,
+     pero podrías necesitar ajustes específicos si mainImage tiene otras propiedades */
+  .mainImage { /* Esta clase ahora se aplica a las imágenes DENTRO del carrusel */
+    width: 100%;
+    height: auto;
+    max-height: 70vh;
+    object-fit: contain;
+    border-radius: var(--border-radius);
+    background-color: var(--tertiary-bg-color);
+    display: block;
+    margin: 0 auto;
+  }
+  
+  /* Estilos para los puntos de navegación de react-slick (opcional pero recomendado) */
+  .carousel .slick-dots {
+    bottom: -25px; /* Ajusta la posición vertical de los puntos */
+  }
+  
+  .carousel .slick-dots li button:before {
+    font-size: 10px; /* Tamaño de los puntos */
+    color: var(--primary-text-color); /* Color de los puntos inactivos */
+    opacity: 0.5;
+  }
+  
+  .carousel .slick-dots li.slick-active button:before {
+    color: var(--accent-color); /* Color del punto activo */
+    opacity: 1;
+  }
+  
+  /* Estilos para las flechas de navegación (opcional) */
+  .carousel .slick-prev,
+  .carousel .slick-next {
+    z-index: 1;
+    width: 30px;
+    height: 30px;
+  }
+  
+  .carousel .slick-prev:before,
+  .carousel .slick-next:before {
+    font-size: 30px; /* Tamaño de las flechas */
+    color: var(--primary-text-color); /* Color de las flechas */
+    opacity: 0.7;
+  }
+  .carousel .slick-prev:hover:before,
+  .carousel .slick-next:hover:before {
+      opacity: 1;
+  }
+  
+  .carousel .slick-prev {
+      left: -35px; /* Ajusta posición de la flecha izquierda */
+  }
+  .carousel .slick-next {
+      right: -35px; /* Ajusta posición de la flecha derecha */
+  }
+  
+  /* --- NUEVA SECCIÓN PARA INTERACCIONES (Likes/Dislikes) --- */
+  .interactions {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-top: 1.5rem; /* Añadido padding-top para separar de la descripción */
+    padding-bottom: 1.5rem;
+    border-top: 1px solid var(--border-color); /* Borde superior para separar */
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Reducido el gap para botones más juntos */
+  }
+  
+  .interactionButton {
+    background-color: var(--tertiary-bg-color);
+    color: var(--primary-text-color);
+    border: 1px solid var(--border-color);
+    padding: 8px 15px;
+    font-size: 1rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    display: inline-flex; /* Para alinear el icono y el contador */
+    align-items: center;
+    gap: 6px; /* Espacio entre el emoji y el número */
+  }
+
+  .interactionButton:hover:not(:disabled) {
+    border-color: var(--accent-color);
+    background-color: rgba(0, 123, 255, 0.1);
+  }
+  
+  .interactionButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .interactionButton.liked,
+  .interactionButton.liked:hover {
+    background-color: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+  }
+  
+  .interactionButton.disliked,
+  .interactionButton.disliked:hover {
+    background-color: var(--error-color);
+    color: white;
+    border-color: var(--error-color);
+  }
+  
+  .interactionErrorMessage {
+      margin-left: 15px; /* Para que no esté pegado a los botones */
+      font-size: 0.9rem;
+  }
+
+  .interactions p {
+    margin: 0;
+    color: var(--secondary-text-color);
+    font-size: 0.9rem;
+  }
+  
+  /* --- Responsive para el carrusel --- */
+  @media (max-width: 992px) {
+    .imageColumn {
+      max-width: 100%; /* Ocupa todo el ancho en móvil */
+    }
+    .carousel .slick-prev {
+      left: 5px;
+    }
+    .carousel .slick-next {
+      right: 5px;
+    }
+  }
+
   /* Responsive */
   @media (max-width: 992px) {
       .detailContainer {

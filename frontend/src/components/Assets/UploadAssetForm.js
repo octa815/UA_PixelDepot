@@ -11,10 +11,12 @@ function UploadAssetForm() {
   const [formData, setFormData] = useState({
     titulo: '',
     descripcion: '',
-    tipo: ASSET_TYPES[0], // Valor inicial por defecto
+    tipo: ASSET_TYPES[0],
   });
-  const [imagenDescriptiva, setImagenDescriptiva] = useState(null); // Para el archivo de imagen
-  const [archivoAsset, setArchivoAsset] = useState(null); // Para el archivo del asset
+  const [imagenDescriptiva, setImagenDescriptiva] = useState(null);
+  const [archivoAsset, setArchivoAsset] = useState(null);
+  // --- NUEVO ESTADO PARA IMÁGENES ADICIONALES ---
+  const [imagenesAdicionales, setImagenesAdicionales] = useState([]); // Será un array de Files
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -35,56 +37,65 @@ function UploadAssetForm() {
     setError('');
   };
 
+  // --- NUEVO HANDLER PARA IMÁGENES ADICIONALES ---
+  const handleImagenesAdicionalesChange = (e) => {
+    setImagenesAdicionales([...e.target.files]); // Guardar todos los archivos seleccionados
+    setError('');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
-    console.log("Frontend: [Submit] Iniciando..."); // Log Inicio
+    console.log("Frontend: [Submit] Iniciando...");
 
-    // Crear FormData (como lo tenías antes de los cambios de URL)
     const data = new FormData();
     data.append('titulo', formData.titulo);
     data.append('descripcion', formData.descripcion);
     data.append('tipo', formData.tipo);
-    // Asegúrate que imagenDescriptiva y archivoAsset sean los File objects del estado
+
     if (imagenDescriptiva) data.append('imagenDescriptiva', imagenDescriptiva);
     if (archivoAsset) data.append('archivo', archivoAsset);
-    console.log("Frontend: [Submit] FormData creado. Llamando a assetService..."); // Log antes de llamar
+
+    // --- AÑADIR IMÁGENES ADICIONALES AL FORMDATA ---
+    if (imagenesAdicionales.length > 0) {
+      for (let i = 0; i < imagenesAdicionales.length; i++) {
+        data.append('imagenesAdicionales', imagenesAdicionales[i]);
+      }
+      console.log(`Frontend: [Submit] ${imagenesAdicionales.length} imágenes adicionales añadidas a FormData.`);
+    }
+    // --- FIN AÑADIR IMÁGENES ---
+
+    console.log("Frontend: [Submit] FormData creado. Llamando a assetService...");
 
     try {
-      const uploadedAsset = await assetService.uploadAsset(data); // Llamada a la API
-      console.log("Frontend: [Submit] Respuesta OK recibida:", uploadedAsset); // Log Respuesta
+      const uploadedAsset = await assetService.uploadAsset(data);
+      console.log("Frontend: [Submit] Respuesta OK recibida:", uploadedAsset);
 
-      // Verifica si la respuesta tiene el ID necesario para navegar
       if (uploadedAsset && uploadedAsset._id) {
-          console.log(`Frontend: [Submit] Respuesta OK y tiene _id. Navegando a /assets/${uploadedAsset._id}`); // Log Navegación
-          navigate(`/assets/${uploadedAsset._id}`, { state: { message: '¡Asset subido con éxito!' } });
-          // NOTA: setLoading(false) se hará en finally, no es necesario aquí
+        console.log(`Frontend: [Submit] Respuesta OK y tiene _id. Navegando a /assets/${uploadedAsset._id}`);
+        navigate(`/assets/${uploadedAsset._id}`, { state: { message: '¡Asset subido con éxito!' } });
       } else {
-           // La respuesta fue exitosa (201) pero no trajo el _id esperado
-           console.error("Frontend: [Submit] Respuesta del backend OK (201) pero falta _id:", uploadedAsset);
-           setError("Error inesperado procesando la respuesta del servidor.");
-           setLoading(false); // Detenemos carga aquí porque no navegaremos
+        console.error("Frontend: [Submit] Respuesta del backend OK (201) pero falta _id:", uploadedAsset);
+        setError("Error inesperado procesando la respuesta del servidor.");
+        // setLoading se maneja en finally, pero si hay error y no se navega,
+        // podría ser útil quitarlo aquí si el 'finally' no cubre todos los casos.
       }
     } catch (err) {
-      // Log detallado del error
       console.error("Frontend: [Submit] ERROR en catch:", err);
-      console.error("Frontend: [Submit] Error response:", err.response?.data); // Muestra datos del error del backend si existen
+      console.error("Frontend: [Submit] Error response:", err.response?.data);
       let errorMessage = 'Error al subir el asset. Inténtalo de nuevo.';
-      // Intenta usar el mensaje del backend si existe
       if (err.response && err.response.data && err.response.data.message) {
-          errorMessage = err.response.data.message;
+        errorMessage = err.response.data.message;
       } else if (err.message) {
-          errorMessage = err.message;
+        errorMessage = err.message;
       }
       setError(errorMessage);
-      // setLoading(false) se hará en finally
     } finally {
-      // Este bloque SIEMPRE se ejecuta, funcione o falle el try/catch
       console.log("Frontend: [Submit] Ejecutando finally, setLoading(false)");
-      setLoading(false); // <-- Asegura que el indicador de carga se quite
+      setLoading(false);
     }
-};
+  };
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
@@ -102,7 +113,7 @@ function UploadAssetForm() {
         disabled={loading}
       />
 
-      <div className={styles.inputGroup}> {/* Envuelve label y select */}
+      <div className={styles.inputGroup}>
         <label htmlFor="tipo" className={styles.label}>Tipo de asset <span className={styles.required}>*</span></label>
         <select
           id="tipo"
@@ -111,7 +122,7 @@ function UploadAssetForm() {
           onChange={handleChange}
           required
           disabled={loading}
-          className={styles.selectInput} // Reutiliza estilo de input o crea uno específico
+          className={styles.selectInput}
         >
           {ASSET_TYPES.map(type => (
             <option key={type} value={type}>{type}</option>
@@ -129,22 +140,44 @@ function UploadAssetForm() {
           placeholder="Detalles sobre el asset, uso, notas..."
           disabled={loading}
           rows="5"
-          className={styles.textareaInput} // Reutiliza estilo de input o crea uno específico
+          className={styles.textareaInput}
         />
       </div>
 
       <Input
-        label="Imagen descriptiva (.jpg, .png, .svg)"
+        label="Imagen descriptiva principal (.jpg, .png, .svg)"
         type="file"
         id="imagenDescriptiva"
         name="imagenDescriptiva"
         onChange={handleImageChange}
         required
         disabled={loading}
-        accept="image/jpeg, image/png, image/svg+xml" // Limita tipos de archivo
+        accept="image/jpeg, image/png, image/svg+xml, image/webp" // Añadido webp
       />
-       {imagenDescriptiva && <p className={styles.fileName}>Archivo seleccionado: {imagenDescriptiva.name}</p>}
+      {imagenDescriptiva && <p className={styles.fileName}>Archivo seleccionado: {imagenDescriptiva.name}</p>}
 
+      {/* --- NUEVO INPUT PARA IMÁGENES ADICIONALES --- */}
+      <Input
+        label={`Imágenes adicionales para carrusel (hasta 10, opcional)`}
+        type="file"
+        id="imagenesAdicionales"
+        name="imagenesAdicionales"
+        onChange={handleImagenesAdicionalesChange}
+        disabled={loading}
+        accept="image/jpeg, image/png, image/svg+xml, image/webp" // Añadido webp
+        multiple // Permite selección múltiple
+      />
+      {imagenesAdicionales.length > 0 && (
+        <div className={styles.fileNamePreview}>
+          <p>{imagenesAdicionales.length} imágenes adicionales seleccionadas:</p>
+          <ul>
+            {Array.from(imagenesAdicionales).map((file, index) => (
+              <li key={index}>{file.name}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {/* --- FIN NUEVO INPUT --- */}
 
       <Input
         label="Archivo del asset (.fbx, .blend, .obj, .mp3, .wav, .mp4, .py, etc.)"
@@ -154,10 +187,8 @@ function UploadAssetForm() {
         onChange={handleAssetFileChange}
         required
         disabled={loading}
-        // Puedes añadir 'accept' si quieres limitar, pero es complejo cubrir todos los tipos
       />
-        {archivoAsset && <p className={styles.fileName}>Archivo seleccionado: {archivoAsset.name}</p>}
-
+      {archivoAsset && <p className={styles.fileName}>Archivo seleccionado: {archivoAsset.name}</p>}
 
       <Button type="submit" variant="primary" size="large" disabled={loading} className={styles.submitButton}>
         {loading ? 'Subiendo...' : 'Subir asset'}

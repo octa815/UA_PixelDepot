@@ -88,3 +88,25 @@ export const deleteAsset = async (id) => {
 export const getAssetDownloadUrl = (id) => {
     return `${ASSETS_API_ENDPOINT}/${id}/download`;
 };
+
+export const likeAsset = async (id) => {
+  try {
+    // El token se añade automáticamente por el interceptor de Axios
+    const response = await axios.put(`${ASSETS_API_ENDPOINT}/${id}/like`);
+    return response.data; // Devuelve el asset actualizado
+  } catch (error) {
+    console.error(`Error liking asset ${id}:`, error);
+    throw error.response?.data || error.message;
+  }
+};
+
+export const dislikeAsset = async (id) => {
+  try {
+    // El token se añade automáticamente por el interceptor de Axios
+    const response = await axios.put(`${ASSETS_API_ENDPOINT}/${id}/dislike`);
+    return response.data; // Devuelve el asset actualizado
+  } catch (error) {
+    console.error(`Error disliking asset ${id}:`, error);
+    throw error.response?.data || error.message;
+  }
+};
