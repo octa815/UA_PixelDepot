@@ -112,7 +112,7 @@
   }
   
   .searchButton {
-    background-color: var(--accent-color);
+    background-color: #0056B3;
     border: none;
     cursor: pointer;
     color: white;
@@ -122,10 +122,9 @@
     margin-left: 5px;
     transition: background-color 0.2s ease;
   }
-  
   .searchButton:hover,
   .searchButton:focus {
-    background-color: var(--accent-hover-color);
+    background-color: #003974; /* Un azul más oscuro para el hover */
   }
   
   .headerRight {
@@ -143,15 +142,15 @@
     padding: 8px 15px;
   }
   
-  .registerButton {
-     background-color: var(--accent-color);
+  .registerButton { 
+     background-color: #0056B3;
      color: white;
      border-radius: var(--border-radius);
      font-weight: bold;
   }
   .registerButton:hover,
   .registerButton:focus {
-     background-color: var(--accent-hover-color);
+     background-color: #003974; /* Un azul más oscuro para el hover */
      color: white;
   }
   

@@ -26,14 +26,15 @@
   
   /* Variants */
   .primary {
-    background-color: var(--accent-color);
+    background-color: #0056B3;
     color: white;
-    border-color: var(--accent-color);
+    border-color: #0056B3;
   }
   .primary:not(:disabled):hover,
   .primary:not(:disabled):focus {
-    background-color: var(--accent-hover-color);
-    border-color: var(--accent-hover-color);
+    background-color: #003974;
+    border-color: #003974;
+    color: white;
   }
   
   .secondary {

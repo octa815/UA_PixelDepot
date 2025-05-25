@@ -46,14 +46,15 @@
   
   .ctaButtonPrimary {
       composes: ctaButton; /* Hereda estilos de ctaButton */
-      background-color: var(--accent-color);
+      background-color: #0056B3;
       color: white;
   }
   .ctaButtonPrimary:hover,
   .ctaButtonPrimary:focus {
-      background-color: rgb(67, 137, 202);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+    background-color: #003974; /* Un azul aún más oscuro para el hover */
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 86, 179, 0.3);
   }
   
   .ctaButtonSecondary {
